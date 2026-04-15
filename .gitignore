@@ -1,0 +1,12 @@
+# Python caches
+__pycache__/
+*.pyc
+
+# ML Models and Big Datasets
+MailoraPro/Modeller/
+MailoraPro/VeriSetleri/
+*.bin
+*.model
+*.safetensors
+*.h5
+*.msgpack
