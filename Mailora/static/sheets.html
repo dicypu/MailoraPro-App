@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mailora — Tablo (Sheets)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/premium.css">
+    <style>
+        .app { grid-template-columns: 260px 1fr; }
+        .sheets-main { grid-row: 2; display: flex; flex-direction: column; overflow: hidden; }
+
+        .nav-link { padding: 10px 14px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); transition: var(--transition); margin-bottom: 2px; text-decoration: none; }
+        .nav-link:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+        .nav-link.active { background: rgba(59,130,246,0.15); color: var(--accent-blue); font-weight: 500; }
+
+        /* Sheets Toolbar */
+        .sheets-toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); flex-wrap: wrap; }
+        .sheets-toolbar-group { display: flex; gap: 4px; padding-right: 8px; border-right: 1px solid var(--border); margin-right: 4px; }
+        .sheets-toolbar-group:last-child { border-right: none; }
+        .st-btn { padding: 6px 10px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-secondary); cursor: pointer; font-size: 12px; font-family: inherit; transition: var(--transition); }
+        .st-btn:hover { border-color: var(--accent-blue); color: var(--text-primary); background: rgba(59,130,246,0.1); }
+        .st-btn.active { background: rgba(59,130,246,0.2); border-color: var(--accent-blue); color: var(--accent-blue); }
+        .st-select { padding: 5px 8px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-family: inherit; font-size: 12px; cursor: pointer; }
+
+        /* Formula Bar */
+        .formula-bar { display: flex; align-items: center; gap: 8px; padding: 6px 16px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); }
+        .cell-ref { padding: 5px 10px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--accent-blue); min-width: 60px; text-align: center; font-family: 'Courier New', monospace; }
+        .formula-icon { color: var(--text-muted); font-size: 14px; font-style: italic; font-weight: 700; }
+        .formula-input { flex: 1; padding: 5px 10px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-family: 'Courier New', monospace; font-size: 12px; transition: var(--transition); }
+        .formula-input:focus { outline: none; border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+
+        /* Spreadsheet Grid */
+        .sheet-container { flex: 1; overflow: auto; position: relative; }
+        .sheet-table { border-collapse: collapse; min-width: 100%; }
+        .sheet-table th { background: var(--bg-tertiary); border: 1px solid var(--border); padding: 6px 4px; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; position: sticky; top: 0; z-index: 2; min-width: 100px; user-select: none; cursor: pointer; }
+        .sheet-table th:first-child { min-width: 40px; width: 40px; position: sticky; left: 0; z-index: 3; }
+        .sheet-table th:hover { background: rgba(59,130,246,0.1); color: var(--text-primary); }
+        .sheet-table td { border: 1px solid var(--border); padding: 0; font-size: 12px; background: var(--bg-secondary); position: relative; }
+        .sheet-table td:first-child { background: var(--bg-tertiary); text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 600; position: sticky; left: 0; z-index: 1; padding: 6px 4px; cursor: pointer; user-select: none; }
+        .sheet-table td:first-child:hover { background: rgba(59,130,246,0.1); }
+        .cell-input { width: 100%; height: 100%; padding: 6px 8px; border: none; background: transparent; color: var(--text-primary); font-family: inherit; font-size: 12px; outline: none; }
+        .cell-input:focus { background: rgba(59,130,246,0.08); box-shadow: inset 0 0 0 2px var(--accent-blue); }
+
+        /* Sheet Tabs */
+        .sheet-tabs { display: flex; align-items: center; gap: 0; padding: 0 8px; border-top: 1px solid var(--border); background: var(--bg-secondary); height: 36px; }
+        .sheet-tab { padding: 8px 20px; font-size: 12px; font-weight: 500; color: var(--text-secondary); cursor: pointer; border-right: 1px solid var(--border); transition: var(--transition); height: 100%; display: flex; align-items: center; font-family: inherit; background: transparent; border-top: none; border-bottom: none; border-left: none; }
+        .sheet-tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.03); }
+        .sheet-tab.active { color: var(--accent-blue); font-weight: 600; border-bottom: 2px solid var(--accent-blue); background: var(--bg-tertiary); }
+        .sheet-tab-add { padding: 8px 14px; font-size: 16px; color: var(--text-muted); cursor: pointer; background: transparent; border: none; font-family: inherit; transition: var(--transition); }
+        .sheet-tab-add:hover { color: var(--accent-blue); }
+
+        /* Status Bar */
+        .sheet-status { display: flex; align-items: center; gap: 16px; padding: 6px 16px; border-top: 1px solid var(--border); background: var(--bg-tertiary); font-size: 11px; color: var(--text-muted); }
+        .sheet-status-item { display: flex; align-items: center; gap: 4px; }
+        .sheet-status-item strong { color: var(--text-secondary); }
+
+        /* Context Menu */
+        .ctx-menu { position: fixed; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 10px; padding: 6px; min-width: 160px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); z-index: 1000; display: none; animation: fadeIn .15s; }
+        .ctx-item { padding: 8px 12px; font-size: 12px; color: var(--text-secondary); cursor: pointer; border-radius: 6px; transition: var(--transition); }
+        .ctx-item:hover { background: rgba(59,130,246,0.1); color: var(--text-primary); }
+        .ctx-sep { height: 1px; background: var(--border); margin: 4px 0; }
+
+        /* Sidebar Sheets List */
+        .sheet-file { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; cursor: pointer; transition: var(--transition); margin-bottom: 4px; font-size: 12px; color: var(--text-secondary); }
+        .sheet-file:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+        .sheet-file.active { background: rgba(59,130,246,0.15); color: var(--accent-blue); }
+        .sheet-file-icon { font-size: 16px; }
+        .sheet-file-date { font-size: 10px; color: var(--text-muted); margin-left: auto; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">✉</div>
+                <span class="logo-text">Mailora</span>
+            </div>
+            <input type="text" class="search-box" placeholder="🔍 Hücre veya veri ara..." id="sheet-search" oninput="searchCells(this.value)">
+            <div class="header-actions">
+                <button class="compose-btn" onclick="addSheet()">📄 Yeni Sayfa</button>
+                <button class="icon-btn" onclick="exportCSV()" title="CSV İndir">📥</button>
+                <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" title="Tema">🌙</button>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="section-label">Navigasyon</div>
+            <a href="index.html" class="nav-link">📥 Inbox</a>
+            <a href="calendar.html" class="nav-link">📅 Takvim</a>
+            <a href="sheets.html" class="nav-link active">📊 Tablo</a>
+            <a href="admin.html" class="nav-link">🛡️ Admin Panel</a>
+
+            <div class="section-label" style="margin-top:20px">Tablolar</div>
+            <div id="sheet-files">
+                <div class="sheet-file active"><span class="sheet-file-icon">📊</span> Proje Takip <span class="sheet-file-date">Bugün</span></div>
+                <div class="sheet-file"><span class="sheet-file-icon">📊</span> Bütçe Planı <span class="sheet-file-date">Dün</span></div>
+                <div class="sheet-file"><span class="sheet-file-icon">📊</span> Müşteri Listesi <span class="sheet-file-date">12 Nis</span></div>
+            </div>
+
+            <div class="section-label" style="margin-top:20px">Hızlı Formüller</div>
+            <div style="padding:8px;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;font-size:11px;color:var(--text-muted);line-height:1.8">
+                <code>=SUM(A1:A10)</code><br>
+                <code>=AVG(B1:B5)</code><br>
+                <code>=MAX(C1:C20)</code><br>
+                <code>=MIN(D1:D10)</code><br>
+                <code>=COUNT(A:A)</code>
+            </div>
+        </aside>
+
+        <!-- Main Sheets -->
+        <div class="sheets-main">
+            <!-- Toolbar -->
+            <div class="sheets-toolbar">
+                <div class="sheets-toolbar-group">
+                    <button class="st-btn" onclick="applyFormat('bold')" title="Kalın"><strong>B</strong></button>
+                    <button class="st-btn" onclick="applyFormat('italic')" title="İtalik"><em>I</em></button>
+                    <button class="st-btn" onclick="applyFormat('underline')" title="Altçizgi"><u>U</u></button>
+                </div>
+                <div class="sheets-toolbar-group">
+                    <select class="st-select" id="font-size" onchange="changeFontSize(this.value)">
+                        <option>10</option><option selected>12</option><option>14</option><option>16</option><option>18</option>
+                    </select>
+                </div>
+                <div class="sheets-toolbar-group">
+                    <button class="st-btn" onclick="applyAlign('left')" title="Sola">⬅</button>
+                    <button class="st-btn" onclick="applyAlign('center')" title="Ortala">⬛</button>
+                    <button class="st-btn" onclick="applyAlign('right')" title="Sağa">➡</button>
+                </div>
+                <div class="sheets-toolbar-group">
+                    <button class="st-btn" onclick="insertRow()" title="Satır Ekle">➕ Satır</button>
+                    <button class="st-btn" onclick="insertCol()" title="Sütun Ekle">➕ Sütun</button>
+                    <button class="st-btn" onclick="deleteSelected()" title="Sil" style="color:var(--accent-red)">🗑️</button>
+                </div>
+                <div class="sheets-toolbar-group">
+                    <button class="st-btn" onclick="sortColumn('asc')">↑ Sırala</button>
+                    <button class="st-btn" onclick="sortColumn('desc')">↓ Sırala</button>
+                </div>
+            </div>
+
+            <!-- Formula Bar -->
+            <div class="formula-bar">
+                <span class="cell-ref" id="active-cell-ref">A1</span>
+                <span class="formula-icon">fx</span>
+                <input type="text" class="formula-input" id="formula-input" placeholder="Hücre değeri veya formül girin..." onkeydown="if(event.key==='Enter')applyFormula()">
+            </div>
+
+            <!-- Spreadsheet -->
+            <div class="sheet-container" id="sheet-container" oncontextmenu="showContextMenu(event)">
+                <table class="sheet-table" id="sheet-table"></table>
+            </div>
+
+            <!-- Sheet Tabs -->
+            <div class="sheet-tabs">
+                <button class="sheet-tab active" onclick="switchSheet(0,this)">📊 Sayfa 1</button>
+                <button class="sheet-tab" onclick="switchSheet(1,this)">📊 Sayfa 2</button>
+                <button class="sheet-tab-add" onclick="addSheet()" title="Yeni Sayfa">+</button>
+            </div>
+
+            <!-- Status Bar -->
+            <div class="sheet-status">
+                <div class="sheet-status-item">Toplam: <strong id="status-sum">0</strong></div>
+                <div class="sheet-status-item">Ortalama: <strong id="status-avg">0</strong></div>
+                <div class="sheet-status-item">Sayı: <strong id="status-count">0</strong></div>
+                <div class="sheet-status-item">Min: <strong id="status-min">—</strong></div>
+                <div class="sheet-status-item">Max: <strong id="status-max">—</strong></div>
+                <div class="sheet-status-item" style="margin-left:auto">Satır: <strong id="status-rows">50</strong> × Sütun: <strong id="status-cols">20</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="ctx-menu" id="ctx-menu">
+        <div class="ctx-item" onclick="insertRow()">➕ Satır Ekle</div>
+        <div class="ctx-item" onclick="insertCol()">➕ Sütun Ekle</div>
+        <div class="ctx-sep"></div>
+        <div class="ctx-item" onclick="deleteSelected()">🗑️ Sil</div>
+        <div class="ctx-sep"></div>
+        <div class="ctx-item" onclick="copyCell()">📋 Kopyala</div>
+        <div class="ctx-item" onclick="pasteCell()">📌 Yapıştır</div>
+    </div>
+
+    <script>
+        const ROWS = 50, COLS = 20;
+        let data = [];
+        let activeCell = null;
+        let clipboard = '';
+        let sheets = [null, null];
+        let activeSheet = 0;
+
+        // Demo data
+        const demoData = [
+            ['Proje', 'Durum', 'Sorumlu', 'Başlangıç', 'Bitiş', 'Bütçe (₺)', 'İlerleme'],
+            ['Mailora AI', 'Devam Ediyor', 'Ali', '2026-01-10', '2026-06-30', '150000', '%85'],
+            ['Web Portal', 'Tamamlandı', 'Ayşe', '2025-09-01', '2026-03-15', '95000', '%100'],
+            ['Mobil App', 'Planlanıyor', 'Mehmet', '2026-05-01', '2026-12-31', '200000', '%10'],
+            ['API Gateway', 'Devam Ediyor', 'Fatma', '2026-02-15', '2026-08-01', '80000', '%60'],
+            ['ML Pipeline', 'Test', 'Ahmet', '2026-03-01', '2026-07-15', '120000', '%75'],
+            ['Dashboard v2', 'Review', 'Zeynep', '2026-04-01', '2026-09-30', '65000', '%40'],
+        ];
+
+        function initData() {
+            data = [];
+            for (let r = 0; r < ROWS; r++) {
+                data[r] = [];
+                for (let c = 0; c < COLS; c++) {
+                    data[r][c] = demoData[r]?.[c] || '';
+                }
+            }
+        }
+
+        function colName(c) {
+            let name = '';
+            c++;
+            while (c > 0) { c--; name = String.fromCharCode(65 + c % 26) + name; c = Math.floor(c / 26); }
+            return name;
+        }
+
+        function renderTable() {
+            const table = document.getElementById('sheet-table');
+            let html = '<thead><tr><th></th>';
+            for (let c = 0; c < COLS; c++) html += `<th onclick="selectCol(${c})">${colName(c)}</th>`;
+            html += '</tr></thead><tbody>';
+
+            for (let r = 0; r < ROWS; r++) {
+                html += `<tr><td onclick="selectRow(${r})">${r + 1}</td>`;
+                for (let c = 0; c < COLS; c++) {
+                    const val = data[r][c] || '';
+                    const isHeader = r === 0 && val;
+                    html += `<td><input class="cell-input" data-r="${r}" data-c="${c}" value="${val}" 
+                        onfocus="onCellFocus(this)" oninput="onCellInput(this)" onblur="onCellBlur(this)"
+                        style="${isHeader ? 'font-weight:700;color:var(--accent-blue)' : val.startsWith('%') ? 'color:var(--accent-green)' : ''}"></td>`;
+                }
+                html += '</tr>';
+            }
+            html += '</tbody>';
+            table.innerHTML = html;
+        }
+
+        function onCellFocus(el) {
+            const r = +el.dataset.r, c = +el.dataset.c;
+            activeCell = { r, c, el };
+            document.getElementById('active-cell-ref').textContent = colName(c) + (r + 1);
+            document.getElementById('formula-input').value = data[r][c];
+        }
+
+        function onCellInput(el) {
+            const r = +el.dataset.r, c = +el.dataset.c;
+            data[r][c] = el.value;
+            document.getElementById('formula-input').value = el.value;
+            updateStatus();
+            saveToStorage();
+        }
+
+        function onCellBlur(el) {
+            const r = +el.dataset.r, c = +el.dataset.c;
+            let val = el.value.trim();
+            // Simple formula support
+            if (val.startsWith('=')) {
+                val = evaluateFormula(val, r, c);
+                el.value = val;
+                data[r][c] = val;
+            }
+        }
+
+        function evaluateFormula(formula, row, col) {
+            try {
+                const f = formula.toUpperCase().replace('=', '');
+                // SUM
+                if (f.startsWith('SUM(')) {
+                    const range = parseRange(f.replace('SUM(', '').replace(')', ''));
+                    return range.reduce((s, v) => s + (parseFloat(v) || 0), 0);
+                }
+                // AVG
+                if (f.startsWith('AVG(')) {
+                    const range = parseRange(f.replace('AVG(', '').replace(')', ''));
+                    const nums = range.filter(v => !isNaN(parseFloat(v))).map(Number);
+                    return nums.length ? (nums.reduce((s, v) => s + v, 0) / nums.length).toFixed(2) : 0;
+                }
+                // MAX
+                if (f.startsWith('MAX(')) {
+                    const range = parseRange(f.replace('MAX(', '').replace(')', ''));
+                    return Math.max(...range.filter(v => !isNaN(parseFloat(v))).map(Number));
+                }
+                // MIN
+                if (f.startsWith('MIN(')) {
+                    const range = parseRange(f.replace('MIN(', '').replace(')', ''));
+                    return Math.min(...range.filter(v => !isNaN(parseFloat(v))).map(Number));
+                }
+                // COUNT
+                if (f.startsWith('COUNT(')) {
+                    const range = parseRange(f.replace('COUNT(', '').replace(')', ''));
+                    return range.filter(v => v !== '').length;
+                }
+                return '#HATA';
+            } catch { return '#HATA'; }
+        }
+
+        function parseRange(rangeStr) {
+            const [start, end] = rangeStr.split(':');
+            const sc = start.replace(/[0-9]/g, '').charCodeAt(0) - 65;
+            const sr = parseInt(start.replace(/[A-Z]/gi, '')) - 1;
+            const ec = end.replace(/[0-9]/g, '').charCodeAt(0) - 65;
+            const er = parseInt(end.replace(/[A-Z]/gi, '')) - 1;
+            const vals = [];
+            for (let r = sr; r <= er; r++) {
+                for (let c = sc; c <= ec; c++) {
+                    if (data[r]?.[c] !== undefined) vals.push(data[r][c]);
+                }
+            }
+            return vals;
+        }
+
+        function applyFormula() {
+            if (!activeCell) return;
+            const val = document.getElementById('formula-input').value;
+            activeCell.el.value = val;
+            data[activeCell.r][activeCell.c] = val;
+            onCellBlur(activeCell.el);
+            updateStatus();
+        }
+
+        function updateStatus() {
+            // Gather all numeric values
+            const nums = data.flat().filter(v => v !== '' && !isNaN(parseFloat(v))).map(Number);
+            document.getElementById('status-sum').textContent = nums.reduce((s, v) => s + v, 0).toLocaleString('tr-TR');
+            document.getElementById('status-avg').textContent = nums.length ? (nums.reduce((s, v) => s + v, 0) / nums.length).toFixed(1) : '0';
+            document.getElementById('status-count').textContent = data.flat().filter(v => v !== '').length;
+            document.getElementById('status-min').textContent = nums.length ? Math.min(...nums).toLocaleString('tr-TR') : '—';
+            document.getElementById('status-max').textContent = nums.length ? Math.max(...nums).toLocaleString('tr-TR') : '—';
+        }
+
+        function insertRow() {
+            if (!activeCell) return;
+            data.splice(activeCell.r + 1, 0, new Array(COLS).fill(''));
+            renderTable(); hideCtx();
+        }
+
+        function insertCol() {
+            if (!activeCell) return;
+            data.forEach(row => row.splice(activeCell.c + 1, 0, ''));
+            renderTable(); hideCtx();
+        }
+
+        function deleteSelected() {
+            if (!activeCell) return;
+            data[activeCell.r][activeCell.c] = '';
+            renderTable(); hideCtx();
+        }
+
+        function selectRow(r) { /* highlight entire row */ }
+        function selectCol(c) { /* highlight entire column */ }
+
+        function sortColumn(dir) {
+            if (!activeCell) return;
+            const c = activeCell.c;
+            const header = data[0];
+            const body = data.slice(1).filter(row => row.some(v => v !== ''));
+            body.sort((a, b) => {
+                const va = a[c] || '', vb = b[c] || '';
+                const na = parseFloat(va), nb = parseFloat(vb);
+                if (!isNaN(na) && !isNaN(nb)) return dir === 'asc' ? na - nb : nb - na;
+                return dir === 'asc' ? va.localeCompare(vb, 'tr') : vb.localeCompare(va, 'tr');
+            });
+            data = [header, ...body];
+            while (data.length < ROWS) data.push(new Array(COLS).fill(''));
+            renderTable();
+        }
+
+        function copyCell() { if (activeCell) clipboard = data[activeCell.r][activeCell.c]; hideCtx(); }
+        function pasteCell() { if (activeCell && clipboard) { data[activeCell.r][activeCell.c] = clipboard; renderTable(); } hideCtx(); }
+
+        function showContextMenu(e) {
+            e.preventDefault();
+            const ctx = document.getElementById('ctx-menu');
+            ctx.style.display = 'block';
+            ctx.style.left = e.clientX + 'px';
+            ctx.style.top = e.clientY + 'px';
+        }
+        function hideCtx() { document.getElementById('ctx-menu').style.display = 'none'; }
+        document.addEventListener('click', hideCtx);
+
+        function searchCells(q) {
+            if (!q) { renderTable(); return; }
+            q = q.toLowerCase();
+            document.querySelectorAll('.cell-input').forEach(el => {
+                const match = el.value.toLowerCase().includes(q);
+                el.style.background = match ? 'rgba(59,130,246,0.2)' : '';
+            });
+        }
+
+        function exportCSV() {
+            const csv = data.filter(r => r.some(v => v !== '')).map(r => r.join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `mailora_tablo_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+        }
+
+        function addSheet() {
+            const tabs = document.querySelector('.sheet-tabs');
+            const idx = tabs.querySelectorAll('.sheet-tab').length;
+            const btn = document.createElement('button');
+            btn.className = 'sheet-tab';
+            btn.textContent = `📊 Sayfa ${idx + 1}`;
+            btn.onclick = function() { switchSheet(idx, this); };
+            tabs.insertBefore(btn, tabs.querySelector('.sheet-tab-add'));
+            sheets[idx] = null;
+            switchSheet(idx, btn);
+        }
+
+        function switchSheet(idx, btn) {
+            sheets[activeSheet] = JSON.parse(JSON.stringify(data));
+            activeSheet = idx;
+            if (sheets[idx]) data = JSON.parse(JSON.stringify(sheets[idx]));
+            else initData();
+            document.querySelectorAll('.sheet-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            renderTable(); updateStatus();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('mailora-sheets', JSON.stringify({ data, sheets: sheets, active: activeSheet }));
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+            html.dataset.theme = next;
+            document.getElementById('theme-btn').textContent = next === 'dark' ? '🌙' : '☀️';
+        }
+
+        // Init
+        initData();
+        renderTable();
+        updateStatus();
+    </script>
+</body>
+</html>
