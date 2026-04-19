@@ -209,11 +209,18 @@ async def summarize_text(req: SummarizeRequest):
     logger.info("Yükleniyor: Özetleme modeli (mrm8488/bert2bert)")
     model_id = "mrm8488/bert2bert_shared-turkish-summarization"
     try:
-        summarizer = pipeline("summarization", model=model_id, device=0 if device=="cuda" else -1)
-        res = summarizer(req.text[:2000], max_length=60, min_length=20, do_sample=False)[0]['summary_text']
+        from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+        
+        tokenizer = AutoTokenizer.from_pretrained(model_id)
+        model = AutoModelForSeq2SeqLM.from_pretrained(model_id).to(device)
+        
+        inputs = tokenizer(req.text[:2000], return_tensors="pt", max_length=512, truncation=True, padding=True).to(device)
+        summary_ids = model.generate(inputs["input_ids"], max_length=80, min_length=15, num_beams=4, no_repeat_ngram_size=3)
+        res = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
         
         # Free memory
-        del summarizer
+        del model, tokenizer
+        gc.collect()
         if device == "cuda":
             torch.cuda.empty_cache()
             

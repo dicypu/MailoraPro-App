@@ -414,10 +414,19 @@
         }
 
         function switchSheet(idx, btn) {
+            // Save current sheet data
             sheets[activeSheet] = JSON.parse(JSON.stringify(data));
             activeSheet = idx;
-            if (sheets[idx]) data = JSON.parse(JSON.stringify(sheets[idx]));
-            else initData();
+            // Load target sheet or create fresh
+            if (sheets[idx] && sheets[idx].length > 0) {
+                data = JSON.parse(JSON.stringify(sheets[idx]));
+            } else {
+                // Empty new sheet
+                data = [];
+                for (let r = 0; r < ROWS; r++) {
+                    data[r] = new Array(COLS).fill('');
+                }
+            }
             document.querySelectorAll('.sheet-tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
             renderTable(); updateStatus();

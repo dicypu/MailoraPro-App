@@ -208,7 +208,8 @@
         let currentDate = new Date();
         let currentView = 'month';
         let selectedColor = 'blue';
-        let events = JSON.parse(localStorage.getItem('mailora-events') || '[]');
+        let events = [];
+        try { events = JSON.parse(localStorage.getItem('mailora-events') || '[]'); } catch(e) { events = []; }
 
         // Demo events
         if (events.length === 0) {
@@ -260,8 +261,11 @@
                 const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
                 const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
                 const dayEvents = events.filter(e => e.date === dateStr);
-                const evHtml = dayEvents.map(e => `<div class="cal-event ${e.color}" title="${e.title} (${e.start}-${e.end})" onclick="event.stopPropagation();alert('${e.title}\\n${e.start} - ${e.end}\\n📍 ${e.location||'—'}')">${e.start ? e.start+' ' : ''}${e.title}</div>`).join('');
-                html += `<div class="cal-cell ${isToday?'today':''}" onclick="openEventModal('${dateStr}')"><div class="cal-date">${d}</div>${evHtml}</div>`;
+                const evHtml = dayEvents.map(e => {
+                    const safeTitle = (e.title||'').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    return `<div class="cal-event ${e.color}" title="${safeTitle} (${e.start||''}-${e.end||''})" data-eid="${e.id}">${e.start ? e.start+' ' : ''}${e.title}</div>`;
+                }).join('');
+                html += `<div class="cal-cell ${isToday?'today':''}" data-date="${dateStr}"><div class="cal-date">${d}</div>${evHtml}</div>`;
             }
 
             // Next month fill
@@ -272,6 +276,21 @@
             }
 
             grid.innerHTML = html;
+
+            // Bind click events after render
+            grid.querySelectorAll('.cal-cell:not(.other-month)').forEach(cell => {
+                cell.addEventListener('click', function(e) {
+                    if (e.target.closest('.cal-event')) {
+                        // Clicked on an event - show its details
+                        const eid = parseInt(e.target.closest('.cal-event').dataset.eid);
+                        const ev = events.find(x => x.id === eid);
+                        if (ev) alert(`${ev.title}\n${ev.start||''} - ${ev.end||''}\n📍 ${ev.location||'—'}\n${ev.desc||''}`);
+                    } else {
+                        // Clicked on empty area - create new event
+                        openEventModal(cell.dataset.date);
+                    }
+                });
+            });
         }
 
         function renderMiniCalendar() {
