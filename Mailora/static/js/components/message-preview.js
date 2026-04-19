@@ -135,8 +135,8 @@ async function showAI(msg) {
                 </div>
             </div>
             <div id="ai-real-summary-box" style="margin-top:16px;padding:12px;background:var(--bg-primary);border-radius:6px;border:1px solid var(--border-color)">
-                <strong>📝 Üretken Özet (mrm8488/bert2bert)</strong>
-                <div id="ai-real-summary-content" style="margin-top:8px;font-style:italic"><div style="display:flex;align-items:center;gap:8px"><div class="spinner"></div> <span>Model belleğe yüklenip özet çıkartılıyor (Lazy Load)... 2-3 sn bekleyin.</span></div></div>
+                <strong>📝 Üretken Özet (MT5-Small)</strong>
+                <div id="ai-real-summary-content" style="margin-top:8px;font-style:italic"><div style="display:flex;align-items:center;gap:8px"><div class="spinner"></div> <span>Model belleğe yüklenip özet çıkartılıyor... 3-4 sn bekleyin.</span></div></div>
             </div>
             <div style="margin-top:10px;font-size:10px;color:var(--text-muted)">BERT Turkish Model • ${data.duygu?.error ? '⚠️ Duygu modeli yüklenmedi' : '✅ Duygu aktif'} • ${data.konu?.error ? '⚠️ Konu modeli yüklenmedi' : '✅ Konu aktif'}</div>
         `;

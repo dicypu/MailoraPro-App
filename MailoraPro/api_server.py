@@ -206,16 +206,26 @@ async def translate_text(req: TranslateRequest):
 
 @app.post("/summarize")
 async def summarize_text(req: SummarizeRequest):
-    logger.info("Yükleniyor: Özetleme modeli (mrm8488/bert2bert)")
-    model_id = "mrm8488/bert2bert_shared-turkish-summarization"
+    logger.info("Yükleniyor: Özetleme modeli (MT5-Small)")
+    model_id = "ozcangundes/mt5-small-turkish-summarization"
     try:
         from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
         
         tokenizer = AutoTokenizer.from_pretrained(model_id)
         model = AutoModelForSeq2SeqLM.from_pretrained(model_id).to(device)
         
+        # Orijinal metnin başına "summarize: " gibi bir prefix eklemeye gerek yok çünkü model zaten özetleme için eğitilmiş.
         inputs = tokenizer(req.text[:2000], return_tensors="pt", max_length=512, truncation=True, padding=True).to(device)
-        summary_ids = model.generate(inputs["input_ids"], max_length=80, min_length=15, num_beams=4, no_repeat_ngram_size=3)
+        
+        summary_ids = model.generate(
+            inputs["input_ids"],
+            max_length=80, 
+            min_length=15, 
+            num_beams=4,
+            length_penalty=1.0,
+            no_repeat_ngram_size=3,
+            early_stopping=True
+        )
         res = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
         
         # Free memory
