@@ -55,8 +55,10 @@ def load_models():
     global konu_model, konu_tokenizer
     global spam_model, spam_tokenizer
 
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+
     # 1. Duygu Modeli
-    yol_duygu = "./Modeller/Duygu_Modeli_Final"
+    yol_duygu = os.path.join(base_dir, "Modeller", "Duygu_Modeli_Final")
     if os.path.exists(yol_duygu) and os.path.exists(os.path.join(yol_duygu, "config.json")):
         logger.info(f"🎭 Duygu modeli yükleniyor: {yol_duygu}")
         duygu_tokenizer = BertTokenizer.from_pretrained(yol_duygu, local_files_only=True)
@@ -65,7 +67,7 @@ def load_models():
         logger.info("✅ Duygu modeli hazır!")
 
     # 2. Konu Modeli v3
-    yol_konu = "./Modeller/Konu_Modeli_v3"
+    yol_konu = os.path.join(base_dir, "Modeller", "Konu_Modeli_v3")
     if os.path.exists(yol_konu) and os.path.exists(os.path.join(yol_konu, "config.json")):
         logger.info(f"📌 Konu modeli yükleniyor: {yol_konu}")
         konu_tokenizer = BertTokenizer.from_pretrained(yol_konu, local_files_only=True)
@@ -74,7 +76,7 @@ def load_models():
         logger.info("✅ Konu modeli v2 hazır!")
 
     # 3. Spam Modeli
-    yol_spam = "./Modeller/Spam_Modeli_v1"
+    yol_spam = os.path.join(base_dir, "Modeller", "Spam_Modeli_v1")
     if os.path.exists(yol_spam) and os.path.exists(os.path.join(yol_spam, "config.json")):
         logger.info(f"🛡️ Spam modeli yükleniyor: {yol_spam}")
         spam_tokenizer = BertTokenizer.from_pretrained(yol_spam, local_files_only=True)
@@ -112,9 +114,11 @@ def predict_single(model, tokenizer, text, etiket_map):
         outputs = model(**inputs)
     probs = torch.softmax(outputs.logits, dim=-1)[0].tolist()
     pred_id = torch.argmax(outputs.logits, dim=-1).item()
+    scores = {etiket_map[i]: round(prob * 100, 1) for i, prob in enumerate(probs) if i in etiket_map}
     return {
         "label": etiket_map[pred_id],
-        "confidence": round(max(probs) * 100, 1)
+        "confidence": round(max(probs) * 100, 1),
+        "scores": scores
     }
 
 def process_text(text: str):
@@ -270,7 +274,8 @@ async def extract_entities(req: NERRequest):
 @app.post("/smart-reply")
 async def smart_reply(req: SmartReplyRequest):
     logger.info("Yükleniyor: Akıllı Yanıt Modeli (Generative MT5)")
-    model_path = "./Modeller/Smart_Reply_Model"
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    model_path = os.path.join(base_dir, "Modeller", "Smart_Reply_Model")
     if not os.path.exists(model_path):
          return {"replies": ["Teşekkürler.", "Anladım.", "İyi çalışmalar."]}
     
