@@ -1,4 +1,10 @@
 // Mailora v2 — Configuration
+const urlParams = new URLSearchParams(window.location.search);
+const queryMode = urlParams.get('mode');
+if (queryMode === 'demo' || queryMode === 'live') {
+    localStorage.setItem('mailora-mode', queryMode);
+}
+
 export const CONFIG = {
     mode: localStorage.getItem('mailora-mode') || 'demo',
     apiBase: '',
