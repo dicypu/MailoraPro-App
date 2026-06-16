@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mailora — E-posta İstemcisi</title>
+    <meta name="description" content="Mailora - Akıllı e-posta yönetim platformu. Çoklu hesap, AI özet, çeviri, zamanlama ve daha fazlası.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/premium.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <img src="/static/logo.png" style="height:28px; width:auto; object-fit:contain; background:transparent; border-radius:6px; margin-right:8px;">
+                <span class="logo-text">Mailora</span>
+            </div>
+            <input type="text" id="search" class="search-box" placeholder="🔍 Ara... (/ tuşu)" oninput="mailora.search(this.value)">
+            <div class="header-actions">
+                <button class="compose-btn" onclick="mailora.compose()">✏️ Yeni E-posta</button>
+                <button class="icon-btn" id="focus-btn" onclick="mailora.toggleFocus()" title="Focus Mode">🎯</button>
+                <button class="icon-btn" onclick="mailora.toggleAnalytics()" title="Analytics">📊</button>
+                <div style="position:relative;">
+                    <button class="icon-btn" onclick="document.getElementById('app-launcher').classList.toggle('open')" title="Uygulamalar">▦</button>
+                    <!-- Apps Dropdown -->
+                    <div id="app-launcher" class="apps-dropdown">
+                        <a href="/static/Example/index.html" class="app-icon">
+                            <span class="app-icon-img">✉️</span>
+                            <span class="app-icon-label">E-posta</span>
+                        </a>
+                        <a href="/static/Example/calendar.html" class="app-icon">
+                            <span class="app-icon-img">📅</span>
+                            <span class="app-icon-label">Takvim</span>
+                        </a>
+                        <a href="/static/Example/sheets.html" class="app-icon">
+                            <span class="app-icon-img">📊</span>
+                            <span class="app-icon-label">Tablo</span>
+                        </a>
+                        <a href="/static/Example/admin.html" class="app-icon">
+                            <span class="app-icon-img">🛡️</span>
+                            <span class="app-icon-label">Admin</span>
+                        </a>
+                    </div>
+                </div>
+                <button class="icon-btn" id="theme-btn" onclick="document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark'" title="Tema">🌙</button>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="user-profile" style="background:var(--bg-tertiary); margin:-10px -10px 15px -10px; padding:15px; border-bottom:1px solid var(--border);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <div style="font-weight:600; color:var(--text-primary); font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Ali Yılmaz</div>
+                    <button style="background:none; border:none; color:var(--accent-red); cursor:pointer; font-size:12px; font-weight:600;">Çıkış</button>
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <button style="display:none; flex:1; padding:6px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); border-radius:6px; color:#10b981; font-size:11px; font-weight:600; cursor:pointer;">+ Hesap</button>
+                    <button style="flex:1; padding:6px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); border-radius:6px; color:var(--accent-blue); font-size:11px; font-weight:600; cursor:pointer;">🔄 Sync</button>
+                </div>
+            </div>
+            <div class="section-label">Hesaplar</div>
+            <div id="account-list"></div>
+            <div class="section-label">Klasörler</div>
+            <div id="folder-list"></div>
+        </aside>
+
+        <!-- Message List -->
+        <div class="list-panel">
+            <div class="list-header">
+                <h3 id="list-title">Inbox</h3>
+            </div>
+            <div id="message-list"></div>
+        </div>
+
+        <!-- Preview Pane -->
+        <div class="preview-panel" id="preview-pane">
+            <div class="empty-state">
+                <div class="empty-icon">📬</div>
+                <div>Bir e-posta seçin</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compose Modal -->
+    <div id="compose-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Yeni E-posta</h3>
+                <button class="modal-close" onclick="mailora.closeCompose()">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="compose-to" class="compose-input" placeholder="Kime">
+                <input type="text" id="compose-subject" class="compose-input" placeholder="Konu">
+                <textarea id="compose-body" class="compose-textarea" placeholder="Mesajınız..."></textarea>
+                <!-- Attachment -->
+                <input type="file" id="compose-files" multiple style="display:none" onchange="mailora.handleFileInput(event)">
+                <div class="dropzone" id="dropzone" onclick="document.getElementById('compose-files').click()">
+                    <div class="dropzone-icon">📎</div>
+                    <div class="dropzone-text">Dosya eklemek için tıklayın veya sürükleyin (maks. 10MB)</div>
+                </div>
+                <div id="attachment-preview"></div>
+                <!-- Schedule -->
+                <div class="schedule-row">
+                    <label><input type="checkbox" id="schedule-check" onchange="document.getElementById('schedule-time').style.display=this.checked?'inline':'none'"> 📅 Zamanla</label>
+                    <input type="datetime-local" id="schedule-time" class="schedule-input" style="display:none">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="toolbar-btn" onclick="mailora.closeCompose()">İptal</button>
+                <button class="send-btn" onclick="mailora.sendEmail()">📤 Gönder</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Drawer -->
+    <div id="analytics-drawer" class="analytics-drawer">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+            <h3>📊 Analytics</h3>
+            <button class="modal-close" onclick="mailora.toggleAnalytics()">✕</button>
+        </div>
+        <div class="stat-card"><div class="stat-value" id="stat-total">0</div><div class="stat-label">Toplam E-posta</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-sent">0</div><div class="stat-label">Gönderilen</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-received">0</div><div class="stat-label">Alınan</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-response">—</div><div class="stat-label">Ort. Yanıt Süresi</div></div>
+        <div class="stat-card"><div class="stat-label" style="margin-bottom:8px">En Çok Yazışılan</div><div id="stat-top" style="font-size:13px"></div></div>
+    </div>
+
+    <script src="js/mock-app.js"></script>
+</body>
+</html>

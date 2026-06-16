@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kişiler — Mailora</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface2: #222637;
+            --border: #2d3348;
+            --accent: #6366f1;
+            --accent2: #818cf8;
+            --text: #e2e8f0;
+            --muted: #64748b;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warn: #f59e0b;
+            --radius: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ── Top Nav ── */
+        .topnav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px;
+            height: 52px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .topnav .logo {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--accent2);
+            letter-spacing: -0.5px;
+        }
+
+        .topnav .nav-links {
+            display: flex;
+            gap: 4px;
+            margin-left: 16px;
+        }
+
+        .topnav .nav-links a {
+            font-size: 13px;
+            padding: 5px 12px;
+            border-radius: 6px;
+            color: var(--muted);
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+
+        .topnav .nav-links a:hover,
+        .topnav .nav-links a.active {
+            background: var(--surface2);
+            color: var(--text);
+        }
+
+        .topnav .spacer {
+            flex: 1;
+        }
+
+        .topnav .sync-btn {
+            font-size: 12px;
+            padding: 5px 12px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .topnav .sync-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent2);
+        }
+
+        /* ── Layout ── */
+        .layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 220px;
+            flex-shrink: 0;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar .section-header {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 16px 16px 6px;
+        }
+
+        .sidebar .group-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 16px;
+            font-size: 13px;
+            cursor: pointer;
+            border-radius: 0;
+            transition: background 0.1s;
+            color: var(--text);
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+
+        .sidebar .group-item:hover {
+            background: var(--surface2);
+        }
+
+        .sidebar .group-item.active {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent2);
+        }
+
+        .sidebar .group-item .grp-icon {
+            font-size: 14px;
+            width: 20px;
+        }
+
+        .sidebar .group-item .grp-count {
+            margin-left: auto;
+            font-size: 11px;
+            color: var(--muted);
+            background: var(--surface2);
+            padding: 1px 6px;
+            border-radius: 10px;
+        }
+
+        .sidebar .group-color-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sidebar .add-group-btn {
+            margin: 8px 12px;
+            padding: 6px 10px;
+            background: transparent;
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+            color: var(--muted);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .sidebar .add-group-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent2);
+        }
+
+        /* ── Contact List ── */
+        .list-pane {
+            width: 300px;
+            flex-shrink: 0;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .list-header {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .list-header .search-box {
+            flex: 1;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 7px 12px 7px 32px;
+            color: var(--text);
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.15s;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 10px center;
+        }
+
+        .list-header .search-box:focus {
+            border-color: var(--accent);
+        }
+
+        .list-header .new-btn {
+            padding: 7px 12px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: opacity 0.15s;
+        }
+
+        .list-header .new-btn:hover {
+            opacity: 0.85;
+        }
+
+        .contacts-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .contacts-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .contacts-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        .alpha-divider {
+            padding: 4px 14px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            background: rgba(0, 0, 0, 0.2);
+            letter-spacing: 1px;
+            position: sticky;
+            top: 0;
+        }
+
+        .contact-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            transition: background 0.1s;
+        }
+
+        .contact-row:hover {
+            background: var(--surface2);
+        }
+
+        .contact-row.active {
+            background: rgba(99, 102, 241, 0.15);
+            border-left: 3px solid var(--accent);
+        }
+
+        .contact-row .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .contact-row .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .contact-row .info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .contact-row .info .name {
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .contact-row .info .sub {
+            font-size: 11px;
+            color: var(--muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 1px;
+        }
+
+        .contact-row .fav-star {
+            color: var(--warn);
+            font-size: 11px;
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
+
+        .contact-row:hover .fav-star,
+        .contact-row.active .fav-star {
+            opacity: 1;
+        }
+
+        .contact-row.is-fav .fav-star {
+            opacity: 1;
+        }
+
+        .conflict-badge {
+            font-size: 9px;
+            padding: 1px 5px;
+            background: var(--warn);
+            color: #000;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .list-empty {
+            text-align: center;
+            color: var(--muted);
+            padding: 40px 20px;
+            font-size: 13px;
+        }
+
+        /* ── Detail Pane ── */
+        .detail-pane {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+            position: relative;
+        }
+
+        .detail-pane::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .detail-pane::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        .detail-header {
+            padding: 24px 28px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .detail-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .detail-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .detail-info {
+            flex: 1;
+        }
+
+        .detail-info h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .detail-info .detail-sub {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 7px 14px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.85;
+        }
+
+        .btn-ghost {
+            background: var(--surface2);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--accent);
+            color: var(--accent2);
+        }
+
+        .btn-danger {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .detail-body {
+            padding: 20px 28px;
+        }
+
+        .field-group {
+            margin-bottom: 20px;
+        }
+
+        .field-group h4 {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
+        }
+
+        .field-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .field-row:last-child {
+            border-bottom: none;
+        }
+
+        .field-icon {
+            font-size: 15px;
+            width: 20px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .field-value {
+            flex: 1;
+            font-size: 13px;
+        }
+
+        .field-label {
+            font-size: 11px;
+            color: var(--muted);
+            background: var(--surface2);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .field-action {
+            font-size: 11px;
+            color: var(--accent2);
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .field-row:hover .field-action {
+            opacity: 1;
+        }
+
+        .sync-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .sync-status-badge.synced {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .sync-status-badge.local {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent2);
+        }
+
+        .sync-status-badge.conflict {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warn);
+        }
+
+        .sync-status-badge.pending {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--muted);
+        }
+
+        /* ── Issues Banner ── */
+        .issue-banner {
+            padding: 10px 14px;
+            font-size: 12px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: opacity 0.15s;
+        }
+
+        .issue-banner:hover {
+            opacity: 0.8;
+        }
+
+        .issue-banner.conflict {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warn);
+        }
+
+        .issue-banner.dup {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+        }
+
+        .no-contact-selected {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--muted);
+            gap: 12px;
+        }
+
+        .no-contact-selected .icon {
+            font-size: 48px;
+            opacity: 0.3;
+        }
+
+        /* ── Modal ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            width: 600px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            transform: scale(0.96);
+            transition: transform 0.2s;
+        }
+
+        .modal-overlay.open .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-size: 20px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0 4px;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+        }
+
+        .modal-body {
+            padding: 20px 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 7px;
+            padding: 8px 10px;
+            font-size: 13px;
+            outline: none;
+            font-family: inherit;
+            transition: border-color 0.15s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .dynamic-field-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .dynamic-field-row input,
+        .dynamic-field-row select {
+            flex: 1;
+        }
+
+        .remove-btn {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0 4px;
+            line-height: 1;
+        }
+
+        .remove-btn:hover {
+            color: var(--danger);
+        }
+
+        .add-field-btn {
+            background: transparent;
+            border: 1px dashed var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 4px;
+            transition: all 0.15s;
+        }
+
+        .add-field-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent2);
+        }
+
+        .section-sep {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin: 16px 0 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* ── Toast ── */
+        #toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .toast-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.2s ease;
+        }
+
+        .toast-item.success {
+            border-color: var(--success);
+        }
+
+        .toast-item.error {
+            border-color: var(--danger);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        /* ── Scrollbar ── */
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Top Navigation -->
+    <div class="topnav">
+        <div class="logo">✉ Mailora</div>
+        <nav class="nav-links">
+            <a href="/static/app.html">📧 E-posta</a>
+            <a href="/static/contacts.html" class="active">📇 Kişiler</a>
+            <a href="/static/calendar.html">📅 Takvim</a>
+        </nav>
+        <div class="spacer"></div>
+        <div id="sync-status" style="font-size:12px;color:var(--muted)"></div>
+        <button class="sync-btn" onclick="syncCarddav()">⟳ Senkronize Et</button>
+    </div>
+
+    <!-- Layout -->
+    <div class="layout">
+
+        <!-- Sidebar: Groups -->
+        <aside class="sidebar">
+            <div class="section-header">Görünüm</div>
+            <button class="group-item active" data-filter="all" onclick="setFilter('all',this)">
+                <span class="grp-icon">🌐</span> Tüm Kişiler
+                <span class="grp-count" id="count-all">—</span>
+            </button>
+            <button class="group-item" data-filter="favorites" onclick="setFilter('favorites',this)">
+                <span class="grp-icon">⭐</span> Favoriler
+                <span class="grp-count" id="count-fav">—</span>
+            </button>
+            <button class="group-item" data-filter="recent" onclick="setFilter('recent',this)">
+                <span class="grp-icon">🕐</span> Son Güncelleme
+            </button>
+
+            <div class="section-header">Gruplar</div>
+            <div id="groups-list"></div>
+            <button class="add-group-btn" onclick="openNewGroupModal()">+ Yeni Grup</button>
+        </aside>
+
+        <!-- Contact List -->
+        <div class="list-pane">
+            <div class="list-header">
+                <input id="search-box" class="search-box" type="text" placeholder="Ara..."
+                    oninput="onSearch(this.value)" />
+                <button class="new-btn" onclick="openNewContactModal()">+ Yeni</button>
+            </div>
+            <div id="notifications-area"></div>
+            <div class="contacts-list" id="contacts-list">
+                <div class="list-empty">Yükleniyor…</div>
+            </div>
+        </div>
+
+        <!-- Detail Pane -->
+        <div class="detail-pane" id="detail-pane">
+            <div class="no-contact-selected">
+                <div class="icon">📇</div>
+                <div>Bir kişi seçin</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── Create / Edit Contact Modal ── -->
+    <div class="modal-overlay" id="contact-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Yeni Kişi</h3>
+                <button class="modal-close" onclick="closeModal('contact-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group"><label>Ad</label><input id="f-first-name" type="text" placeholder="Ad" />
+                    </div>
+                    <div class="form-group"><label>Soyad</label><input id="f-last-name" type="text"
+                            placeholder="Soyad" /></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Şirket</label><input id="f-company" type="text"
+                            placeholder="Şirket" /></div>
+                    <div class="form-group"><label>Unvan</label><input id="f-title" type="text" placeholder="Unvan" />
+                    </div>
+                </div>
+                <div class="form-row full">
+                    <div class="form-group"><label>Not</label><textarea id="f-note" placeholder="Not…"></textarea></div>
+                </div>
+
+                <div class="section-sep">E-posta Adresleri</div>
+                <div id="email-fields"></div>
+                <button class="add-field-btn" onclick="addEmailField()">+ E-posta Ekle</button>
+
+                <div class="section-sep">Telefon Numaraları</div>
+                <div id="phone-fields"></div>
+                <button class="add-field-btn" onclick="addPhoneField()">+ Telefon Ekle</button>
+
+                <div class="section-sep">Adresler</div>
+                <div id="address-fields"></div>
+                <button class="add-field-btn" onclick="addAddressField()">+ Adres Ekle</button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('contact-modal')">İptal</button>
+                <button class="btn btn-primary" onclick="saveContact()">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── New Group Modal ── -->
+    <div class="modal-overlay" id="group-modal">
+        <div class="modal" style="width:380px">
+            <div class="modal-header">
+                <h3>Yeni Grup</h3>
+                <button class="modal-close" onclick="closeModal('group-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group" style="margin-bottom:12px">
+                    <label>Grup Adı</label>
+                    <input id="g-name" type="text" placeholder="ör. Müşteriler" />
+                </div>
+                <div class="form-group">
+                    <label>Renk</label>
+                    <input id="g-color" type="color" value="#6366f1"
+                        style="height:36px;padding:2px;border-radius:6px;width:80px" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal('group-modal')">İptal</button>
+                <button class="btn btn-primary" onclick="saveGroup()">Oluştur</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toast"></div>
+
+    <script>
+        // ── State ────────────────────────────────────────────────────
+        let contacts = [];
+        let groups = [];
+        let selectedContactId = null;
+        let editingContactId = null;
+        let currentFilter = 'all';
+        let currentGroupId = null;
+        let searchDebounce = null;
+        let currentAccountId = null;
+
+        // ── Init ─────────────────────────────────────────────────────
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadCurrentAccount();
+            await Promise.all([loadGroups(), loadContacts()]);
+        });
+
+        async function loadCurrentAccount() {
+            try {
+                const r = await fetch('/accounts');
+                const data = await r.json();
+                const accounts = data.accounts || data;
+                if (accounts && accounts.length > 0) {
+                    currentAccountId = accounts[0].id;
+                }
+            } catch (e) { console.error('Account load failed', e); }
+        }
+
+        // ── Data loading ─────────────────────────────────────────────
+        async function loadContacts(search = '') {
+            const params = new URLSearchParams();
+            if (currentAccountId) params.set('account_id', currentAccountId);
+            if (search) params.set('q', search);
+            if (currentFilter === 'favorites') params.set('favorite', 'true');
+            if (currentGroupId) params.set('group_id', currentGroupId);
+            if (currentFilter === 'recent') params.set('sort', 'updated');
+            params.set('limit', '500');
+
+            try {
+                const r = await fetch('/contacts?' + params);
+                const data = await r.json();
+                contacts = data.contacts || [];
+                renderContactList();
+                updateCounts();
+                checkIssues();
+            } catch (e) {
+                showToast('Kişiler yüklenemedi', 'error');
+            }
+        }
+
+        async function loadGroups() {
+            if (!currentAccountId) return;
+            try {
+                const r = await fetch('/contacts/groups?account_id=' + currentAccountId);
+                const data = await r.json();
+                groups = data.groups || [];
+                renderGroups();
+            } catch (e) { console.error('Groups load failed', e); }
+        }
+
+        // ── Render ───────────────────────────────────────────────────
+        function renderContactList() {
+            const container = document.getElementById('contacts-list');
+            if (contacts.length === 0) {
+                container.innerHTML = '<div class="list-empty">Kişi bulunamadı</div>';
+                return;
+            }
+
+            // Sort alphabetically and group by first letter
+            const sorted = [...contacts].sort((a, b) => (a.full_name || '').localeCompare(b.full_name || '', 'tr'));
+            let html = '';
+            let lastLetter = '';
+            for (const c of sorted) {
+                const letter = (c.full_name || '?')[0].toUpperCase();
+                if (letter !== lastLetter) {
+                    html += `<div class="alpha-divider">${letter}</div>`;
+                    lastLetter = letter;
+                }
+                const initials = getInitials(c.full_name);
+                const avatarHtml = c.photo_data && c.photo_data.length < 200000
+                    ? `<img src="${c.photo_data}" alt="" />`
+                    : initials;
+                const sub = c.company || c.primary_email || '';
+                const isActive = c.id === selectedContactId ? ' active' : '';
+                const isFav = c.is_favorite ? ' is-fav' : '';
+                const conflict = c.sync_status === 'conflict' ? '<span class="conflict-badge">⚠ Çakışma</span>' : '';
+                html += `
+      <div class="contact-row${isActive}${isFav}" onclick="selectContact('${c.id}')" id="row-${c.id}">
+        <div class="avatar">${avatarHtml}</div>
+        <div class="info">
+          <div class="name">${escHtml(c.full_name)} ${conflict}</div>
+          <div class="sub">${escHtml(sub)}</div>
+        </div>
+        <span class="fav-star">⭐</span>
+      </div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        function renderGroups() {
+            const container = document.getElementById('groups-list');
+            if (groups.length === 0) { container.innerHTML = ''; return; }
+            container.innerHTML = groups.map(g => `
+    <button class="group-item" data-group="${g.id}" onclick="setFilterGroup('${g.id}', '${escHtml(g.name)}', this)">
+      <span class="group-color-dot" style="background:${g.color || '#6366f1'}"></span>
+      ${escHtml(g.name)}
+    </button>`).join('');
+        }
+
+        function updateCounts() {
+            document.getElementById('count-all').textContent = contacts.length;
+            // Fav count: quick client-side
+            const favCount = contacts.filter(c => c.is_favorite).length;
+            document.getElementById('count-fav').textContent = favCount || '—';
+        }
+
+        // ── Contact Detail ────────────────────────────────────────────
+        async function selectContact(id) {
+            selectedContactId = id;
+            // Update active row
+            document.querySelectorAll('.contact-row').forEach(r => r.classList.remove('active'));
+            document.getElementById('row-' + id)?.classList.add('active');
+
+            // Load full detail
+            try {
+                const r = await fetch('/contacts/' + id);
+                if (!r.ok) throw new Error('Not found');
+                const c = await r.json();
+                renderDetail(c);
+            } catch (e) {
+                showToast('Kişi detayı yüklenemedi', 'error');
+            }
+        }
+
+        function renderDetail(c) {
+            const pane = document.getElementById('detail-pane');
+            const contact = c.contact || c;
+            const emails = c.emails || [];
+            const phones = c.phones || [];
+            const addresses = c.addresses || [];
+            const social = c.social || [];
+
+            const initials = getInitials(contact.full_name);
+            const avatarHtml = contact.photo_data && contact.photo_data.length < 200000
+                ? `<img src="${contact.photo_data}" alt="" />`
+                : initials;
+            const sub = [contact.title, contact.company].filter(Boolean).join(' • ');
+
+            const syncBadge = {
+                synced: '<span class="sync-status-badge synced">✓ Senkronize</span>',
+                local: '<span class="sync-status-badge local">● Yerel</span>',
+                conflict: '<span class="sync-status-badge conflict">⚠ Çakışma</span>',
+                pending_create: '<span class="sync-status-badge pending">⇑ Senkron bekliyor</span>',
+                pending_update: '<span class="sync-status-badge pending">⇑ Güncelleme bekliyor</span>',
+            }[contact.sync_status] || '';
+
+            let emailRows = emails.map(e => `
+    <div class="field-row">
+      <span class="field-icon">📧</span>
+      <span class="field-value">${escHtml(e.email)}</span>
+      <span class="field-label">${labelTr(e.label)}</span>
+      <span class="field-action" onclick="copyText('${e.email}')">Kopyala</span>
+    </div>`).join('');
+
+            let phoneRows = phones.map(p => `
+    <div class="field-row">
+      <span class="field-icon">📞</span>
+      <span class="field-value">${escHtml(p.phone)}</span>
+      <span class="field-label">${labelTr(p.label)}</span>
+    </div>`).join('');
+
+            let addrRows = addresses.map(a => {
+                const parts = [a.street, a.city, a.region, a.postal_code, a.country].filter(Boolean);
+                return `
+    <div class="field-row">
+      <span class="field-icon">🏠</span>
+      <span class="field-value">${escHtml(parts.join(', '))}</span>
+      <span class="field-label">${labelTr(a.label)}</span>
+    </div>`;
+            }).join('');
+
+            let socialRows = social.map(s => `
+    <div class="field-row">
+      <span class="field-icon">🔗</span>
+      <a href="${escHtml(s.url)}" target="_blank" class="field-value" style="color:var(--accent2)">${escHtml(s.url)}</a>
+      <span class="field-label">${escHtml(s.service)}</span>
+    </div>`).join('');
+
+            pane.innerHTML = `
+    <div class="detail-header">
+      <div class="detail-avatar">${avatarHtml}</div>
+      <div class="detail-info">
+        <h2>${escHtml(contact.full_name)}</h2>
+        <div class="detail-sub">${escHtml(sub)} ${syncBadge}</div>
+        <div class="detail-actions">
+          ${emails[0] ? `<button class="btn btn-primary" onclick="composeEmail('${emails[0].email}')">📧 E-posta Gönder</button>` : ''}
+          <button class="btn btn-ghost" onclick="openEditModal('${contact.id}')">✏️ Düzenle</button>
+          <button class="btn btn-ghost" onclick="toggleFavorite('${contact.id}', ${contact.is_favorite})">${contact.is_favorite ? '⭐ Favori' : '☆ Favoriye Ekle'}</button>
+          <button class="btn btn-danger" onclick="confirmDelete('${contact.id}', '${escHtml(contact.full_name)}')">Sil</button>
+        </div>
+      </div>
+    </div>
+    <div class="detail-body">
+      ${emails.length ? `<div class="field-group"><h4>E-posta</h4>${emailRows}</div>` : ''}
+      ${phones.length ? `<div class="field-group"><h4>Telefon</h4>${phoneRows}</div>` : ''}
+      ${addresses.length ? `<div class="field-group"><h4>Adres</h4>${addrRows}</div>` : ''}
+      ${contact.birthday ? `<div class="field-group"><h4>Doğum Tarihi</h4><div class="field-row"><span class="field-icon">🎂</span><span class="field-value">${escHtml(contact.birthday)}</span></div></div>` : ''}
+      ${contact.note ? `<div class="field-group"><h4>Not</h4><div class="field-row"><span class="field-icon">📌</span><span class="field-value" style="white-space:pre-wrap">${escHtml(contact.note)}</span></div></div>` : ''}
+      ${social.length ? `<div class="field-group"><h4>Sosyal Medya</h4>${socialRows}</div>` : ''}
+    </div>`;
+        }
+
+        // ── Contact Modal ─────────────────────────────────────────────
+        function openNewContactModal() {
+            editingContactId = null;
+            document.getElementById('modal-title').textContent = 'Yeni Kişi';
+            resetForm();
+            addEmailField(); addPhoneField();
+            openModal('contact-modal');
+        }
+
+        async function openEditModal(id) {
+            editingContactId = id;
+            document.getElementById('modal-title').textContent = 'Kişiyi Düzenle';
+            resetForm();
+            try {
+                const r = await fetch('/contacts/' + id);
+                const data = await r.json();
+                const c = data.contact || data;
+                document.getElementById('f-first-name').value = c.first_name || '';
+                document.getElementById('f-last-name').value = c.last_name || '';
+                document.getElementById('f-company').value = c.company || '';
+                document.getElementById('f-title').value = c.title || '';
+                document.getElementById('f-note').value = c.note || '';
+                (data.emails || []).forEach(e => addEmailField(e.email, e.label));
+                (data.phones || []).forEach(p => addPhoneField(p.phone, p.label));
+                (data.addresses || []).forEach(a => addAddressField(a));
+                if (!data.emails?.length) addEmailField();
+                if (!data.phones?.length) addPhoneField();
+            } catch (e) { showToast('Kişi yüklenemedi', 'error'); return; }
+            openModal('contact-modal');
+        }
+
+        function resetForm() {
+            ['f-first-name', 'f-last-name', 'f-company', 'f-title', 'f-note'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('email-fields').innerHTML = '';
+            document.getElementById('phone-fields').innerHTML = '';
+            document.getElementById('address-fields').innerHTML = '';
+        }
+
+        function addEmailField(value = '', label = 'work') {
+            const div = document.createElement('div');
+            div.className = 'dynamic-field-row';
+            div.innerHTML = `
+    <input type="email" placeholder="E-posta" value="${escHtml(value)}" class="email-val" />
+    <select class="email-lbl">
+      <option value="work" ${label === 'work' ? 'selected' : ''}>İş</option>
+      <option value="home" ${label === 'home' ? 'selected' : ''}>Ev</option>
+      <option value="other" ${label === 'other' ? 'selected' : ''}>Diğer</option>
+    </select>
+    <button class="remove-btn" onclick="this.parentElement.remove()">×</button>`;
+            document.getElementById('email-fields').appendChild(div);
+        }
+
+        function addPhoneField(value = '', label = 'mobile') {
+            const div = document.createElement('div');
+            div.className = 'dynamic-field-row';
+            div.innerHTML = `
+    <input type="tel" placeholder="Telefon" value="${escHtml(value)}" class="phone-val" />
+    <select class="phone-lbl">
+      <option value="mobile" ${label === 'mobile' ? 'selected' : ''}>Mobil</option>
+      <option value="work" ${label === 'work' ? 'selected' : ''}>İş</option>
+      <option value="home" ${label === 'home' ? 'selected' : ''}>Ev</option>
+      <option value="fax" ${label === 'fax' ? 'selected' : ''}>Faks</option>
+    </select>
+    <button class="remove-btn" onclick="this.parentElement.remove()">×</button>`;
+            document.getElementById('phone-fields').appendChild(div);
+        }
+
+        function addAddressField(addr = {}) {
+            const div = document.createElement('div');
+            div.className = 'dynamic-field-row';
+            div.style.flexDirection = 'column';
+            div.style.alignItems = 'stretch';
+            div.innerHTML = `
+    <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
+      <select class="addr-lbl" style="flex:1">
+        <option value="home" ${addr.label === 'home' ? 'selected' : ''}>Ev</option>
+        <option value="work" ${addr.label === 'work' ? 'selected' : ''}>İş</option>
+        <option value="other" ${addr.label === 'other' ? 'selected' : ''}>Diğer</option>
+      </select>
+      <button class="remove-btn" onclick="this.closest('.dynamic-field-row').remove()">×</button>
+    </div>
+    <input type="text" placeholder="Sokak" class="addr-street" value="${escHtml(addr.street || '')}" style="margin-bottom:4px" />
+    <div style="display:flex;gap:6px">
+      <input type="text" placeholder="Şehir" class="addr-city" value="${escHtml(addr.city || '')}" style="flex:1" />
+      <input type="text" placeholder="Posta Kodu" class="addr-postal" value="${escHtml(addr.postal_code || '')}" style="width:100px" />
+    </div>`;
+            document.getElementById('address-fields').appendChild(div);
+        }
+
+        async function saveContact() {
+            const firstName = document.getElementById('f-first-name').value.trim();
+            const lastName = document.getElementById('f-last-name').value.trim();
+            const fullName = [firstName, lastName].filter(Boolean).join(' ');
+            if (!fullName) { showToast('Ad gereklidir', 'error'); return; }
+
+            const emails = [...document.querySelectorAll('#email-fields .dynamic-field-row')].map((row, i) => ({
+                email: row.querySelector('.email-val').value.trim(),
+                label: row.querySelector('.email-lbl').value,
+                is_primary: i === 0,
+            })).filter(e => e.email);
+
+            const phones = [...document.querySelectorAll('#phone-fields .dynamic-field-row')].map((row, i) => ({
+                phone: row.querySelector('.phone-val').value.trim(),
+                label: row.querySelector('.phone-lbl').value,
+                is_primary: i === 0,
+            })).filter(p => p.phone);
+
+            const addresses = [...document.querySelectorAll('#address-fields .dynamic-field-row')].map(row => ({
+                label: row.querySelector('.addr-lbl').value,
+                street: row.querySelector('.addr-street')?.value.trim() || null,
+                city: row.querySelector('.addr-city')?.value.trim() || null,
+                postal_code: row.querySelector('.addr-postal')?.value.trim() || null,
+            })).filter(a => a.street || a.city);
+
+            const body = {
+                account_id: currentAccountId,
+                full_name: fullName,
+                first_name: firstName || null,
+                last_name: lastName || null,
+                company: document.getElementById('f-company').value.trim() || null,
+                title: document.getElementById('f-title').value.trim() || null,
+                note: document.getElementById('f-note').value.trim() || null,
+                emails, phones, addresses,
+            };
+
+            try {
+                const url = editingContactId ? '/contacts/' + editingContactId : '/contacts';
+                const method = editingContactId ? 'PUT' : 'POST';
+                const r = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                const data = await r.json();
+                if (!data.ok) throw new Error(data.error);
+                closeModal('contact-modal');
+                showToast(editingContactId ? 'Kişi güncellendi ✓' : 'Kişi oluşturuldu ✓', 'success');
+                await loadContacts(document.getElementById('search-box').value);
+                const newId = editingContactId || data.id;
+                if (newId) selectContact(newId);
+            } catch (e) {
+                showToast('Kayıt hatası: ' + e.message, 'error');
+            }
+        }
+
+        // ── Actions ───────────────────────────────────────────────────
+        async function toggleFavorite(id, currentFav) {
+            // Quick toggle by updating contact — need full payload; workaround: custom endpoint
+            // Simple approach: re-fetch, flip is_favorite, PUT
+            try {
+                const r = await fetch('/contacts/' + id);
+                const data = await r.json();
+                const c = data.contact || data;
+                const body = {
+                    ...c, account_id: currentAccountId || c.account_id, is_favorite: currentFav ? 0 : 1,
+                    emails: data.emails || [], phones: data.phones || [], addresses: data.addresses || []
+                };
+                await fetch('/contacts/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                showToast(currentFav ? 'Favorilerden çıkarıldı' : 'Favorilere eklendi ⭐', 'success');
+                await loadContacts(document.getElementById('search-box').value);
+                selectContact(id);
+            } catch (e) { showToast('Hata', 'error'); }
+        }
+
+        async function confirmDelete(id, name) {
+            if (!confirm(`"${name}" kişisi silinsin mi?`)) return;
+            try {
+                await fetch('/contacts/' + id, { method: 'DELETE' });
+                showToast('Kişi silindi', 'success');
+                selectedContactId = null;
+                document.getElementById('detail-pane').innerHTML = '<div class="no-contact-selected"><div class="icon">📇</div><div>Bir kişi seçin</div></div>';
+                await loadContacts(document.getElementById('search-box').value);
+            } catch (e) { showToast('Silme hatası', 'error'); }
+        }
+
+        function composeEmail(email) {
+            window.location.href = '/static/app.html?compose=' + encodeURIComponent(email);
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => showToast('Kopyalandı ✓', 'success'));
+        }
+
+        // ── Sync ─────────────────────────────────────────────────────
+        async function syncCarddav() {
+            if (!currentAccountId) { showToast('Hesap seçili değil', 'error'); return; }
+            const statusEl = document.getElementById('sync-status');
+            statusEl.textContent = '⟳ Senkronize ediliyor…';
+            try {
+                const r = await fetch('/sync/carddav/' + currentAccountId, { method: 'POST' });
+                const data = await r.json();
+                if (data.ok) {
+                    const res = data.result;
+                    statusEl.textContent = `✓ ${res.synced} yeni, ${res.updated} güncellendi`;
+                    showToast(`Senkronizasyon tamamlandı: ${res.synced} yeni, ${res.updated} güncellendi`, 'success');
+                    await loadContacts(document.getElementById('search-box').value);
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (e) {
+                statusEl.textContent = '✗ Hata';
+                showToast('Sync hatası: ' + e.message, 'error');
+            }
+        }
+
+        // ── Groups ────────────────────────────────────────────────────
+        function openNewGroupModal() { openModal('group-modal'); }
+
+        async function saveGroup() {
+            const name = document.getElementById('g-name').value.trim();
+            const color = document.getElementById('g-color').value;
+            if (!name) { showToast('Grup adı gerekli', 'error'); return; }
+            try {
+                const r = await fetch('/contacts/groups', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ account_id: currentAccountId, name, color }),
+                });
+                const data = await r.json();
+                if (!data.ok) throw new Error(data.error);
+                closeModal('group-modal');
+                showToast('Grup oluşturuldu ✓', 'success');
+                document.getElementById('g-name').value = '';
+                await loadGroups();
+            } catch (e) { showToast('Hata: ' + e.message, 'error'); }
+        }
+
+        // ── Filters ───────────────────────────────────────────────────
+        function setFilter(filter, el) {
+            currentFilter = filter;
+            currentGroupId = null;
+            document.querySelectorAll('.group-item').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            loadContacts(document.getElementById('search-box').value);
+        }
+
+        function setFilterGroup(groupId, name, el) {
+            currentFilter = 'group';
+            currentGroupId = groupId;
+            document.querySelectorAll('.group-item').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            loadContacts(document.getElementById('search-box').value);
+        }
+
+        // ── Search ────────────────────────────────────────────────────
+        function onSearch(value) {
+            clearTimeout(searchDebounce);
+            searchDebounce = setTimeout(() => loadContacts(value), 300);
+        }
+
+        // ── Import / Export ───────────────────────────────────────────
+        async function importVcf() {
+            const input = document.createElement('input');
+            input.type = 'file'; input.accept = '.vcf,text/vcard';
+            input.onchange = async () => {
+                const file = input.files[0];
+                if (!file) return;
+                const text = await file.text();
+                const r = await fetch('/contacts/import?account_id=' + currentAccountId, {
+                    method: 'POST', body: text, headers: { 'Content-Type': 'text/vcard' },
+                });
+                const data = await r.json();
+                showToast(`İçe aktarıldı: ${data.inserted} yeni, ${data.updated} güncellendi, ${data.skipped} atlandı`, 'success');
+                await loadContacts();
+            };
+            input.click();
+        }
+
+        function exportVcf() {
+            const url = '/contacts/export?account_id=' + currentAccountId
+                + (currentGroupId ? '&group_id=' + currentGroupId : '');
+            window.open(url, '_blank');
+        }
+
+        // ── Modal helpers ─────────────────────────────────────────────
+        function openModal(id) { document.getElementById(id).classList.add('open'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+        });
+
+        // ── Utils ─────────────────────────────────────────────────────
+        function escHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function getInitials(name) {
+            if (!name) return '?';
+            const parts = name.trim().split(' ');
+            return parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : name[0];
+        }
+
+        function labelTr(label) {
+            return { work: 'İş', home: 'Ev', mobile: 'Mobil', other: 'Diğer', fax: 'Faks' }[label] || label;
+        }
+
+        function showToast(msg, type = '') {
+            const container = document.getElementById('toast');
+            const div = document.createElement('div');
+            div.className = 'toast-item' + (type ? ' ' + type : '');
+            div.textContent = msg;
+            container.appendChild(div);
+            setTimeout(() => div.remove(), 3500);
+        }
+
+        // ── Issues (Conflicts & Duplicates) ───────────────────────────
+        let activeConflicts = [];
+        let activeDups = [];
+
+        async function checkIssues() {
+            if (!currentAccountId || currentFilter !== 'all' || document.getElementById('search-box').value) {
+                document.getElementById('notifications-area').innerHTML = '';
+                return;
+            }
+            try {
+                const [cRes, dRes] = await Promise.all([
+                    fetch('/contacts/conflicts?account_id=' + currentAccountId),
+                    fetch('/contacts/duplicates?account_id=' + currentAccountId)
+                ]);
+                activeConflicts = cRes.ok ? await cRes.json() : [];
+                activeDups = dRes.ok ? await dRes.json() : [];
+                renderIssues();
+            } catch (e) { console.error("Issues error", e); }
+        }
+
+        function renderIssues() {
+            const area = document.getElementById('notifications-area');
+            let html = '';
+            if (activeConflicts.length > 0) {
+                html += `<div class="issue-banner conflict" onclick="showConflictsModal()">⚠ ${activeConflicts.length} çakışan kişi bulundu. Çözmek için tıklayın.</div>`;
+            }
+            if (activeDups.length > 0) {
+                let total = activeDups.reduce((acc, curr) => acc + (curr.contacts ? curr.contacts.length : 0), 0);
+                html += `<div class="issue-banner dup" onclick="showDupsModal()">🔍 ${total} potansiyel çift (duplikat) kişi. İncele.</div>`;
+            }
+            area.innerHTML = html;
+        }
+
+        async function showConflictsModal() {
+            if (!activeConflicts.length) return;
+            const c = activeConflicts[0];
+            const name = c.local_data?.contact?.full_name || 'Bilinmiyor';
+            const msg = `"${name}" kişisi için senkronizasyon çakışması:\n\n` +
+                `1) TAMAM diyerek sunucudaki (uzak) veriyi kabil edin ve yereli ezin.\n` +
+                `2) İPTAL diyerek yerel değişiklikleri koruyun ve sunucuya zorla gönderin.`;
+
+            if (confirm(msg)) {
+                // Send remote parsed data as merge
+                const merged = buildContactReqFromVCard(c.remote_data_parsed);
+                await fetch('/contacts/conflicts/' + c.id + '/resolve?account_id=' + currentAccountId, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ resolution: 'merge', merged_data: merged })
+                });
+                showToast('Sunucu versiyonu kabul edildi', 'success');
+            } else {
+                await fetch('/contacts/conflicts/' + c.id + '/resolve?account_id=' + currentAccountId, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ resolution: 'local' })
+                });
+                showToast('Yerel versiyon korundu', 'success');
+            }
+            await loadContacts();
+        }
+
+        function buildContactReqFromVCard(parsed) {
+            return {
+                account_id: currentAccountId,
+                full_name: parsed.full_name || 'Unknown',
+                first_name: parsed.first_name || null,
+                last_name: parsed.last_name || null,
+                company: parsed.company || null,
+                title: parsed.title || null,
+                note: parsed.note || null,
+                emails: parsed.emails || [],
+                phones: parsed.phones || [],
+                addresses: parsed.addresses || []
+            };
+        }
+
+        async function showDupsModal() {
+            if (!activeDups.length) return;
+            const group = activeDups[0];
+            const primary = group.contacts[0];
+            const targets = group.contacts.slice(1);
+
+            const msg = `"${primary.full_name}" adlı kişiden birbirine benzeyen ${group.contacts.length} kayıt var. (${group.reason})\n\n` +
+                `TAMAM diyerek bu kişileri tek bir kayıtta birleştirin (Diğerleri silinir).`;
+            if (confirm(msg)) {
+                await fetch('/contacts/duplicates/merge', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        account_id: currentAccountId,
+                        primary_id: primary.id,
+                        target_ids: targets.map(t => t.id)
+                    })
+                });
+                showToast('Kişiler başarıyla birleştirildi', 'success');
+                await loadContacts();
+            }
+        }
+
+    </script>
+</body>
+
+</html>

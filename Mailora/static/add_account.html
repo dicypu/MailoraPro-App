@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mailora — Hesap Ekle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/premium.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: var(--bg-primary);
+        }
+
+        .login-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            width: 380px;
+            max-width: 92vw;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            animation: modalIn 0.4s ease;
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .login-logo h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .login-logo p {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+            transition: var(--transition);
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--gradient-primary);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 4px;
+        }
+
+        .login-btn:hover:not(:disabled) {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .login-error {
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-align: center;
+            min-height: 1.4em;
+            margin-bottom: 12px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .login-link a,
+        .link-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        .login-link a:hover,
+        .link-btn:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .manual-grid {
+            display: grid;
+            grid-template-columns: 1fr 80px;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .manual-grid .login-input {
+            margin-bottom: 0;
+        }
+
+        .manual-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .manual-form-group {
+            margin-bottom: 12px;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card">
+        <div class="login-logo">
+            <h1>📥 Hesap Ekle</h1>
+            <p>Mailora'ya yeni bir IMAP maili ekleyin</p>
+        </div>
+
+        <div id="status" class="login-error"></div>
+
+        <form id="loginForm">
+            <input type="email" id="email" class="login-input" placeholder="E-posta Adresi (ornek@alanadi.com)"
+                required>
+            <input type="password" id="password" class="login-input" placeholder="Şifre / App Password" required>
+
+            <div id="manualConfig" class="hidden">
+                <div class="manual-form-group">
+                    <label class="manual-label">Gelen Sunucusu (IMAP)</label>
+                    <div class="manual-grid">
+                        <input type="text" id="imapHost" class="login-input" placeholder="imap.sunucu.com">
+                        <input type="number" id="imapPort" class="login-input" placeholder="993" value="993">
+                    </div>
+                </div>
+                <div class="manual-form-group">
+                    <label class="manual-label">Giden Sunucusu (SMTP)</label>
+                    <div class="manual-grid">
+                        <input type="text" id="smtpHost" class="login-input" placeholder="smtp.sunucu.com">
+                        <input type="number" id="smtpPort" class="login-input" placeholder="587" value="587">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" id="btnSubmit" class="login-btn">Bağlan</button>
+
+            <div class="login-link" style="margin-top: 12px;">
+                <button type="button" id="toggleManual" class="link-btn">Manuel Kurulum</button>
+            </div>
+        </form>
+
+        <div class="login-link" style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 16px;">
+            <a href="/static/index.html">&larr; Uygulamaya Dön</a>
+        </div>
+    </div>
+
+    <script>
+        // Authentication Check
+        const authToken = localStorage.getItem('auth_token');
+        if (!authToken) {
+            window.location.href = '/static/login.html';
+        }
+
+        const form = document.getElementById('loginForm');
+        const status = document.getElementById('status');
+        const manualConfig = document.getElementById('manualConfig');
+        const btn = document.getElementById('btnSubmit');
+        const toggleBtn = document.getElementById('toggleManual');
+
+        let isManual = false;
+
+        toggleBtn.addEventListener('click', () => {
+            isManual = !isManual;
+            manualConfig.classList.toggle('hidden', !isManual);
+            toggleBtn.textContent = isManual ? "Otomatik Kurulum" : "Manuel Kurulum";
+            btn.textContent = isManual ? "Bağlan (Manuel)" : "Bağlan";
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (isManual) {
+                // Direct login with manual details
+                await performLogin({
+                    email,
+                    password,
+                    provider: 'custom',
+                    imap_host: document.getElementById('imapHost').value.trim(),
+                    imap_port: Number(document.getElementById('imapPort').value),
+                    smtp_host: document.getElementById('smtpHost').value.trim(),
+                    smtp_port: Number(document.getElementById('smtpPort').value)
+                });
+                return;
+            }
+
+            // Step 1: Discover
+            status.textContent = "Sunucu ayarları karanlık ağlarda keşfediliyor...";
+            status.style.color = "var(--accent-blue)";
+            btn.disabled = true;
+
+            try {
+                // Not authenticated for discover, it is public or uses active login headers
+                const res = await fetch('/discover', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': authToken },
+                    body: JSON.stringify({ email })
+                });
+
+                if (!res.ok) throw new Error("Automatic discovery failed");
+
+                const config = await res.json();
+
+                // Populate form with discovered settings
+                document.getElementById('imapHost').value = config.imap.host;
+                document.getElementById('imapPort').value = config.imap.port;
+                document.getElementById('smtpHost').value = config.smtp.host;
+                document.getElementById('smtpPort').value = config.smtp.port;
+
+                // Show settings for review
+                manualConfig.classList.remove('hidden');
+                isManual = true;
+                toggleBtn.textContent = "Otomatik Kurulum";
+
+                // Prompt user to review
+                status.textContent = `${config.source} üzerinden ayarlar bulundu. Lütfen kontrol edip onaylayın.`;
+                status.style.color = "var(--accent-orange)";
+                btn.textContent = "Onayla ve Bağlan";
+                btn.disabled = false;
+
+            } catch (err) {
+                status.textContent = "Ayarlar otomatik bulunamadı. Lütfen manuel giriniz.";
+                status.style.color = "var(--accent-red)";
+                manualConfig.classList.remove('hidden');
+                isManual = true;
+                toggleBtn.textContent = "Otomatik Kurulum";
+                btn.disabled = false;
+                btn.textContent = "Bağlan (Manuel)";
+            }
+        });
+
+        async function performLogin(data) {
+            status.textContent = "Girdiğiniz bilgiler şifrelenerek sunucuya doğrulatılıyor...";
+            status.style.color = "var(--accent-blue)";
+            btn.disabled = true;
+
+            try {
+                // Actual POST request to backend
+                const r = await fetch('/accounts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': authToken },
+                    body: JSON.stringify(data)
+                });
+
+                const j = await r.json().catch(() => ({}));
+
+                if (r.ok && j.success) {
+                    status.textContent = "✅ Hesap başarıyla eklendi! Gelen kutusuna dönülüyor...";
+                    status.style.color = "var(--accent-green)";
+                    setTimeout(() => {
+                        window.location.href = '/static/index.html';
+                    }, 1500);
+                } else {
+                    throw new Error(j.error || j.message || "Bağlantı esnasında hata oluştu.");
+                }
+            } catch (e) {
+                status.textContent = "❌ " + e.message;
+                status.style.color = "var(--accent-red)";
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>

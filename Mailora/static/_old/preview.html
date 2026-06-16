@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mailora - UI Preview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="premium.css">
+</head>
+
+<body>
+    <!-- Mobile Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileMenu()"></div>
+
+    <!-- Compose Modal -->
+    <div id="compose-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Yeni E-posta</h3>
+                <button class="modal-close" onclick="closeCompose()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="position:relative;" id="compose-to-wrap">
+                    <input type="text" id="compose-to" class="compose-input" placeholder="Kime" autocomplete="off"
+                        oninput="onComposeToInput(this.value)" onkeydown="onComposeToKey(event)" />
+                    <div id="contact-suggestions" style="
+                        display:none; position:absolute; top:100%; left:0; right:0;
+                        background:var(--bg-secondary); border:1px solid var(--border);
+                        border-radius:8px; z-index:3000; box-shadow:0 8px 24px rgba(0,0,0,0.4);
+                        max-height:220px; overflow-y:auto; margin-top:2px;
+                    "></div>
+                </div>
+                <input type="text" id="compose-subject" class="compose-input" placeholder="Konu">
+                <textarea id="compose-body" class="compose-textarea" placeholder="Mesajınız..."></textarea>
+
+                <!-- File Attachment Section -->
+                <div class="attachment-section" id="attachment-section">
+                    <input type="file" id="compose-files" multiple accept="*/*" style="display:none;"
+                        onchange="handleFileSelect(event)">
+                    <div class="attachment-dropzone" id="dropzone"
+                        onclick="document.getElementById('compose-files').click()">
+                        <div class="dropzone-content">
+                            <span class="dropzone-icon">📎</span>
+                            <span class="dropzone-text">Dosya eklemek için tıklayın veya sürükleyin</span>
+                            <span class="dropzone-hint">Maksimum 10MB • Resim, PDF, Belge</span>
+                        </div>
+                    </div>
+                    <div id="attachment-preview" class="attachment-preview-list"></div>
+                </div>
+
+                <div class="schedule-row">
+                    <label class="focus-toggle"><input type="checkbox" id="schedule-check"> 📅 Zamanla</label>
+                    <input type="datetime-local" id="schedule-time" class="schedule-input" style="display:none;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="toolbar-btn" onclick="closeCompose()">İptal</button>
+                <button class="send-btn" onclick="sendEmail()">📤 Gönder</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Drawer -->
+    <div id="analytics-drawer" class="analytics-drawer">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3 style="margin:0;">📊 Analytics</h3>
+            <button class="modal-close" onclick="toggleAnalytics()">✕</button>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="stat-total">156</div>
+            <div class="stat-label">Toplam E-posta (Bu Ay)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="stat-sent">42</div>
+            <div class="stat-label">Gönderilen</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="stat-received">114</div>
+            <div class="stat-label">Alınan</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="stat-response">~2.4 saat</div>
+            <div class="stat-label">Ort. Yanıt Süresi</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label" style="margin-bottom:8px;">En Çok Yazışılan</div>
+            <div style="font-size:13px;">1. Mehmet Kaya (23)<br>2. Ayşe Şahin (18)<br>3. John Doe (12)</div>
+        </div>
+    </div>
+
+    <!-- Contact Insights Drawer -->
+    <div id="contact-drawer" class="contact-drawer">
+        <div class="contact-header">
+            <div class="contact-avatar" id="contact-avatar" style="background:var(--gradient-primary);">MK</div>
+            <div>
+                <div style="font-weight:600;" id="contact-name">Mehmet Kaya</div>
+                <div style="font-size:12px; color:var(--text-muted);" id="contact-email">mehmet@firma.com</div>
+            </div>
+            <button class="modal-close" style="margin-left:auto;" onclick="closeContactDrawer()">✕</button>
+        </div>
+        <div class="contact-stats">
+            <div class="contact-stat"><span>Toplam Yazışma</span><span id="contact-total">23</span></div>
+            <div class="contact-stat"><span>İlk İletişim</span><span id="contact-first">15 Ara 2024</span></div>
+            <div class="contact-stat"><span>Son İletişim</span><span id="contact-last">Dün</span></div>
+            <div class="contact-stat"><span>Ort. Yanıt Süresi</span><span id="contact-response">~1.2 saat</span></div>
+            <div class="contact-stat"><span>Ekli Dosya Sayısı</span><span id="contact-attachments">8</span></div>
+        </div>
+        <div style="padding:16px 20px;">
+            <button class="toolbar-btn" style="width:100%;" onclick="showAttachmentGallery()">📎 Tüm Ekler (8)</button>
+        </div>
+    </div>
+
+
+    <div id="app">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <img src="/static/logo.png" style="height:28px; width:auto; object-fit:contain; background:transparent; border-radius:6px; margin-right:8px;">
+                    <span>Mailora</span>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Tema Değiştir"
+                        id="theme-btn">🌙</button>
+                    <div class="user-avatar">RU</div>
+                </div>
+            </div>
+
+            <button class="compose-btn" onclick="openCompose()">
+                <span>✏️</span> Yeni E-posta
+            </button>
+
+            <div class="section-title">Hesaplar</div>
+            <div class="account-list" id="account-list"></div>
+
+            <div class="section-title">Klasörler</div>
+            <div class="folder-list" id="folder-list"></div>
+
+            <div style="margin-top:auto; padding:16px;">
+                <label
+                    style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-muted); cursor:pointer;">
+                    <input type="checkbox" id="unified-check" onchange="toggleUnified()"
+                        style="accent-color:var(--accent-blue);">
+                    Unified Inbox
+                </label>
+            </div>
+        </aside>
+
+        <!-- Message List -->
+        <section class="message-panel">
+            <!-- Mobile Header -->
+            <div class="mobile-header">
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+                <div class="logo">
+                    <img src="/static/logo.png" style="height:28px; width:auto; object-fit:contain; background:transparent; border-radius:6px; margin-right:8px;">
+                    <span>Mailora</span>
+                </div>
+                <button class="theme-toggle" onclick="toggleTheme()" title="Tema Değiştir"
+                    id="theme-btn-mobile">🌙</button>
+            </div>
+
+            <div class="panel-header">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="E-postalarda ara..." oninput="searchMessages()">
+                </div>
+                <button class="toolbar-btn primary" onclick="syncMessages()"><span>🔄</span> Sync</button>
+                <button class="toolbar-btn" onclick="refreshMessages()">↻</button>
+                <button class="toolbar-btn" onclick="toggleAnalytics()" title="Analytics">📊</button>
+                <label class="focus-toggle" title="Focus Mode"><input type="checkbox" id="focus-check"
+                        onchange="toggleFocusMode()"> 🎯</label>
+            </div>
+
+            <div id="message-list"></div>
+        </section>
+
+        <!-- Preview Panel -->
+        <section class="preview-panel">
+            <div id="preview">
+                <div class="empty-state">
+                    <div class="empty-icon">📬</div>
+                    <div class="empty-text">Bir e-posta seçin</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <style>
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .preview-body p {
+            margin: 12px 0;
+        }
+
+        .preview-body ul li {
+            margin: 8px 0;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--accent-green);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            z-index: 3000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.undo {
+            background: var(--accent-orange);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Pin Badge */
+        .pin-badge {
+            color: var(--accent-orange);
+            margin-right: 4px;
+        }
+
+        /* Quick Actions on Hover */
+        .msg-actions {
+            display: none;
+            gap: 4px;
+            margin-left: auto;
+        }
+
+        .message-row:hover .msg-actions {
+            display: flex;
+        }
+
+        .msg-action-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .msg-action-btn:hover {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        /* Reading Time */
+        .reading-time {
+            font-size: 10px;
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+
+        /* AI Summary Badge */
+        .ai-summary {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            color: white;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        /* Translate Button */
+        .translate-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .translate-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .translate-select {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 11px;
+        }
+
+        /* Quick Reply Buttons */
+        .quick-replies {
+            display: flex;
+            gap: 8px;
+            padding: 12px 24px;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .quick-reply-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .quick-reply-btn:hover {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        /* Snooze Dropdown */
+        .snooze-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 180px;
+            z-index: 100;
+            box-shadow: var(--shadow-card);
+            display: none;
+        }
+
+        .snooze-menu.open {
+            display: block;
+        }
+
+        .snooze-option {
+            padding: 8px 16px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+        }
+
+        .snooze-option:hover {
+            background: var(--hover-bg);
+            color: var(--text-primary);
+        }
+
+        /* Focus Mode */
+        .focus-mode .message-row:not(.important) {
+            opacity: 0.4;
+            filter: blur(1px);
+        }
+
+        .focus-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .focus-toggle input {
+            accent-color: var(--accent-purple);
+        }
+
+        /* Analytics Drawer */
+        .analytics-drawer {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 320px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border);
+            z-index: 2000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .analytics-drawer.open {
+            transform: translateX(0);
+        }
+
+        .stat-card {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Contact Insights */
+        .contact-drawer {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 350px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border);
+            z-index: 2000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .contact-drawer.open {
+            transform: translateX(0);
+        }
+
+        .contact-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .contact-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .contact-stats {
+            padding: 16px 20px;
+        }
+
+        .contact-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        /* Unsubscribe Banner */
+        .unsubscribe-banner {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 10px 16px;
+            margin: 0 24px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+        }
+
+        .unsubscribe-btn {
+            background: var(--accent-red);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        /* Read Receipt */
+        .read-receipt {
+            font-size: 11px;
+            color: var(--accent-green);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Undo Toast */
+        .undo-btn {
+            background: white;
+            color: var(--accent-orange);
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-left: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Schedule Modal */
+        .schedule-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .schedule-input {
+            flex: 1;
+            padding: 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+        }
+
+        /* File Attachment Styles */
+        .attachment-section {
+            margin-top: 12px;
+        }
+
+        .attachment-dropzone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-tertiary);
+        }
+
+        .attachment-dropzone:hover,
+        .attachment-dropzone.dragover {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .dropzone-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropzone-icon {
+            font-size: 28px;
+            opacity: 0.8;
+        }
+
+        .dropzone-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .dropzone-hint {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .attachment-preview-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 12px;
+            animation: slideIn 0.2s ease-out;
+        }
+
+        .attachment-item.image {
+            flex-direction: column;
+            padding: 8px;
+        }
+
+        .attachment-item .preview-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .attachment-item .file-icon {
+            font-size: 18px;
+        }
+
+        .attachment-item .file-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .attachment-item .file-name {
+            color: var(--text-primary);
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .attachment-item .file-size {
+            color: var(--text-muted);
+            font-size: 10px;
+        }
+
+        .attachment-item .remove-btn {
+            background: none;
+            border: none;
+            color: var(--accent-red);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .attachment-item .remove-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .attachment-error {
+            color: var(--accent-red);
+            font-size: 11px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Contact suggestion dropdown items */
+        #contact-suggestions .sugg-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 14px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.1s;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        #contact-suggestions .sugg-item:last-child {
+            border-bottom: none;
+        }
+
+        #contact-suggestions .sugg-item:hover,
+        #contact-suggestions .sugg-item.active {
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        #contact-suggestions .sugg-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        #contact-suggestions .sugg-name {
+            font-weight: 500;
+        }
+
+        #contact-suggestions .sugg-email {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+    </style>
+
+    <script>
+        // ===== DEMO DATA =====
+        const accounts = [
+            { id: 'gmail', name: 'Gmail Kişisel', email: 'kullanici@gmail.com', type: 'gmail', icon: '📧' },
+            { id: 'outlook', name: 'İş Hesabı', email: 'is@outlook.com', type: 'outlook', icon: '📨' },
+            { id: 'icloud', name: 'iCloud', email: 'user@icloud.com', type: 'icloud', icon: '✉️' }
+        ];
+
+        const folders = [
+            { id: 'inbox', name: 'Inbox', icon: '📥', count: 24 },
+            { id: 'sent', name: 'Sent', icon: '📤', count: 0 },
+            { id: 'drafts', name: 'Drafts', icon: '📝', count: 3, color: 'var(--accent-orange)' },
+            { id: 'spam', name: 'Spam', icon: '⚠️', count: 12, color: 'var(--accent-red)' },
+            { id: 'trash', name: 'Trash', icon: '🗑️', count: 0 }
+        ];
+
+        const messages = [
+            {
+                id: 1, from: 'John Doe', email: 'john@example.com', subject: 'Proje Güncellemesi: Q1 2026 Hedefleri', time: '10:30', unread: true, hasAttachment: true, account: 'gmail', folder: 'inbox',
+                body: '<p>Merhaba,</p><p>Q1 2026 hedeflerimiz hakkında güncelleme paylaşmak istiyorum. Ekip olarak büyük ilerleme kaydettik.</p><p>Detaylar için ekteki dosyaya bakabilirsin.</p><p>Saygılar,<br><strong>John</strong></p>',
+                attachments: ['hedefler_2026.xlsx']
+            },
+            {
+                id: 2, from: 'Ayşe Şahin', email: 'ayse@firma.com', subject: 'Toplantı notları ve aksiyon maddeleri', time: '09:15', unread: true, hasAttachment: false, account: 'outlook', folder: 'inbox',
+                body: '<p>Merhaba,</p><p>Dünkü toplantının notlarını paylaşıyorum:</p><ul><li>Pazarlama stratejisi onaylandı</li><li>Yeni ürün lansmanı Mart\'ta</li><li>Bütçe revizyonu gerekli</li></ul><p>Teşekkürler,<br><strong>Ayşe</strong></p>'
+            },
+            {
+                id: 3, from: 'Mehmet Kaya', email: 'mehmet.kaya@firma.com', subject: 'Re: Haftalık rapor teslimi', time: 'Dün', unread: false, hasAttachment: true, account: 'gmail', folder: 'inbox',
+                body: '<p>Merhaba,</p><p>Haftalık raporu inceledim, genel olarak güzel görünüyor. Birkaç küçük düzeltme önerim var:</p><ul><li>Satış rakamlarını güncelleyebilir misin?</li><li>Grafiklerde Q4 karşılaştırması eksik</li><li>Sonuç bölümüne 2026 hedeflerini ekleyelim</li></ul><p>Yarın sabaha kadar güncellenmiş versiyonu gönderebilir misin?</p><p>Teşekkürler,<br><strong>Mehmet</strong></p>',
+                attachments: ['rapor_v2.xlsx', 'grafikler.png']
+            },
+            {
+                id: 4, from: 'GitHub', email: 'noreply@github.com', subject: '[mailora-hub] Pull request #42 merged', time: 'Dün', unread: false, hasAttachment: false, account: 'gmail', folder: 'inbox',
+                body: '<p>The following pull request has been merged:</p><p><strong>Fix IMAP connection timeout</strong></p><p>PR #42 by @developer</p><p>View on GitHub →</p>'
+            },
+            {
+                id: 5, from: 'Zeynep Yılmaz', email: 'zeynep@icloud.com', subject: 'Yeni yıl kutlaması ve 2026 planları', time: '2 Oca', unread: false, hasAttachment: true, account: 'icloud', folder: 'inbox',
+                body: '<p>Herkese mutlu yıllar! 🎉</p><p>2026 için harika planlarımız var. Detayları önümüzdeki hafta paylaşacağım.</p><p>Sevgiler,<br><strong>Zeynep</strong></p>',
+                attachments: ['2026_planlar.pdf']
+            },
+            {
+                id: 6, from: 'Amazon', email: 'shipment@amazon.com', subject: 'Siparişiniz kargoya verildi', time: '1 Oca', unread: false, hasAttachment: false, account: 'gmail', folder: 'inbox',
+                body: '<p>Siparişiniz kargoya verildi!</p><p>Takip no: <strong>TR123456789</strong></p><p>Tahmini teslimat: 3-5 iş günü</p>'
+            },
+            {
+                id: 7, from: 'Ben', email: 'kullanici@gmail.com', subject: 'Taslak: Proje özeti', time: '3 Oca', unread: false, hasAttachment: false, account: 'gmail', folder: 'drafts',
+                body: '<p>Bu bir taslak mesajdır...</p>'
+            },
+            {
+                id: 8, from: 'Spam Bot', email: 'spam@fake.com', subject: 'Kazandınız!!!', time: '1 Oca', unread: true, hasAttachment: false, account: 'gmail', folder: 'spam',
+                body: '<p>Bu bir spam mesajıdır.</p>'
+            }
+        ];
+
+        // ===== STATE =====
+        let currentAccount = 'gmail';
+        let currentFolder = 'inbox';
+        let selectedMessage = null;
+        let filteredMessages = [];
+
+        // ===== HELPERS =====
+        const $ = id => document.getElementById(id);
+
+        function getInitials(name) {
+            const parts = name.trim().split(/[\s@]+/);
+            if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+            return name.slice(0, 2).toUpperCase();
+        }
+
+        function getAvatarColor(str) {
+            const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#06b6d4'];
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            return colors[Math.abs(hash) % colors.length];
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ===== RENDER FUNCTIONS =====
+        function renderAccounts() {
+            const html = accounts.map(a => `
+                <div class="account-item ${a.id === currentAccount ? 'active' : ''}" onclick="selectAccount('${a.id}')">
+                    <div class="account-avatar ${a.type}">${a.icon}</div>
+                    <div class="account-info">
+                        <div class="account-name">${a.name}</div>
+                        <div class="account-email">${a.email}</div>
+                    </div>
+                </div>
+            `).join('');
+            $('account-list').innerHTML = html;
+        }
+
+        function renderFolders() {
+            const html = folders.map(f => {
+                const count = messages.filter(m => m.folder === f.id && (currentAccount === 'all' || m.account === currentAccount)).length;
+                const unreadCount = messages.filter(m => m.folder === f.id && m.unread && (currentAccount === 'all' || m.account === currentAccount)).length;
+                const displayCount = f.id === 'inbox' ? unreadCount : (f.count || count);
+                return `
+                    <div class="folder-item ${f.id === currentFolder ? 'active' : ''}" onclick="selectFolder('${f.id}')">
+                        <span class="folder-icon">${f.icon}</span>
+                        <span>${f.name}</span>
+                        ${displayCount > 0 ? `<span class="folder-count" style="background:${f.color || 'var(--accent-blue)'}">${displayCount}</span>` : ''}
+                    </div>
+                `;
+            }).join('');
+            $('folder-list').innerHTML = html;
+        }
+
+        function renderMessages() {
+            const unified = $('unified-check')?.checked;
+            filteredMessages = messages.filter(m => {
+                if (m.folder !== currentFolder) return false;
+                if (!unified && m.account !== currentAccount) return false;
+                return true;
+            });
+
+            const searchTerm = $('search-input')?.value.toLowerCase() || '';
+            if (searchTerm) {
+                filteredMessages = filteredMessages.filter(m =>
+                    m.from.toLowerCase().includes(searchTerm) ||
+                    m.subject.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            if (filteredMessages.length === 0) {
+                $('message-list').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <div class="empty-text">Bu klasörde mesaj yok</div>
+                    </div>`;
+                return;
+            }
+
+            // Sort: pinned first
+            filteredMessages.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
+            const html = filteredMessages.map(m => {
+                const initials = getInitials(m.from);
+                const color = getAvatarColor(m.from);
+                const acc = accounts.find(a => a.id === m.account);
+                const readTime = getReadingTime(m.body);
+                return `
+                    <div class="message-row ${m.unread ? 'unread' : ''} ${selectedMessage === m.id ? 'selected' : ''} ${m.important ? 'important' : ''}" 
+                         onclick="selectMessage(${m.id})">
+                        ${m.pinned ? '<span class="pin-badge">📌</span>' : ''}
+                        ${m.unread && !m.pinned ? '<div class="unread-dot"></div>' : !m.pinned ? '<div style="width:8px;"></div>' : ''}
+                        <div class="msg-avatar" style="background:${color}22; color:${color};" onclick="openContactInsights(messages.find(x=>x.id===${m.id}), event)">${initials}</div>
+                        <div class="msg-content">
+                            <div class="msg-header">
+                                <span class="msg-from">${m.from}</span>
+                                <span class="reading-time">~${readTime} dk</span>
+                                <span class="msg-time">${m.time}</span>
+                            </div>
+                            <div class="msg-subject">${m.subject}</div>
+                            <div class="msg-tags">
+                                <span class="msg-tag" style="background:${color}22; color:${color};">${acc?.name || m.account}</span>
+                                ${m.hasAttachment ? '<span class="msg-tag attachment">📎 Ek</span>' : ''}
+                                ${m.isNewsletter ? '<span class="msg-tag" style="background:#ef444422; color:#ef4444;">📰 Newsletter</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="msg-actions">
+                            <button class="msg-action-btn" onclick="togglePin(${m.id}, event)" title="${m.pinned ? 'Sabitlemeyi kaldır' : 'Sabitle'}">📌</button>
+                            <button class="msg-action-btn" onclick="snoozeMessage(${m.id}, '1 saat', event)" title="Ertele">⏰</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            $('message-list').innerHTML = html;
+        }
+
+        function renderPreview(msg) {
+            const initials = getInitials(msg.from);
+            const color = getAvatarColor(msg.from);
+            const readTime = getReadingTime(msg.body);
+            const summaryText = msg.body?.replace(/<[^>]*>/g, '').substring(0, 80) + '...';
+
+            $('preview').innerHTML = `
+                <div class="preview-header">
+                    <div class="preview-subject">${msg.subject}</div>
+                    <div class="preview-meta">
+                        <div class="preview-avatar" style="background:${color};" onclick="openContactInsights(messages.find(x=>x.id===${msg.id}), event)">${initials}</div>
+                        <div class="preview-sender">
+                            <div class="preview-from">${msg.from}</div>
+                            <div class="preview-date">${msg.email} • ${msg.time} • ~${readTime} dk okuma</div>
+                        </div>
+                        <div class="preview-actions">
+                            <button class="action-btn" onclick="replyMessage(${msg.id})" title="Yanıtla">↩️</button>
+                            <button class="action-btn" onclick="forwardMessage(${msg.id})" title="İlet">↪️</button>
+                            <button class="action-btn" onclick="deleteMessage(${msg.id})" title="Sil">🗑️</button>
+                            <button class="action-btn" onclick="togglePin(${msg.id})" title="Sabitle">📌</button>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:12px; margin-top:12px; align-items:center;">
+                        <div class="ai-summary">🤖 AI Özet: ${summaryText}</div>
+                        <button class="translate-btn" onclick="document.getElementById('translate-menu').classList.toggle('open')">🌍 Çevir</button>
+                        <div id="translate-menu" class="snooze-menu">
+                            <div class="snooze-option" onclick="translateEmail('en')">🇬🇧 English</div>
+                            <div class="snooze-option" onclick="translateEmail('de')">🇩🇪 Deutsch</div>
+                            <div class="snooze-option" onclick="translateEmail('fr')">🇫🇷 Français</div>
+                            <div class="snooze-option" onclick="translateEmail('es')">🇪🇸 Español</div>
+                            <div class="snooze-option" onclick="translateEmail('ar')">🇸🇦 العربية</div>
+                        </div>
+                    </div>
+                </div>
+                ${msg.isNewsletter ? `
+                    <div class="unsubscribe-banner">
+                        <span>📰 Bu bir newsletter e-postası</span>
+                        <button class="unsubscribe-btn" onclick="smartUnsubscribe('${msg.email}')">🚫 Aboneliği İptal Et</button>
+                    </div>
+                ` : ''}
+                <div class="preview-body" style="padding:24px; line-height:1.7; color:var(--text-secondary);">
+                    ${msg.body}
+                </div>
+                ${msg.attachments ? `
+                    <div class="attachments-bar">
+                        ${msg.attachments.map(a => `<a class="attachment-chip" href="#" onclick="downloadAttachment('${a}')">📎 ${a}</a>`).join('')}
+                    </div>
+                ` : ''}
+                <div class="quick-replies">
+                    <button class="quick-reply-btn" onclick="quickReply('Teşekkürler')">👍 Teşekkürler</button>
+                    <button class="quick-reply-btn" onclick="quickReply('Anladım')">✅ Anladım</button>
+                    <button class="quick-reply-btn" onclick="quickReply('İnceleyeceğim')">📋 İnceleyeceğim</button>
+                    <button class="quick-reply-btn" onclick="quickReply('Toplantı ayarlayalım')">📅 Toplantı</button>
+                </div>
+            `;
+        }
+
+        // ===== EVENT HANDLERS =====
+        function selectAccount(id) {
+            currentAccount = id;
+            renderAccounts();
+            renderFolders();
+            renderMessages();
+            closeMobileMenu();
+        }
+
+        function selectFolder(id) {
+            currentFolder = id;
+            selectedMessage = null;
+            renderFolders();
+            renderMessages();
+            $('preview').innerHTML = '<div class="empty-state"><div class="empty-icon">📬</div><div class="empty-text">Bir e-posta seçin</div></div>';
+            closeMobileMenu();
+        }
+
+        function selectMessage(id) {
+            selectedMessage = id;
+            const msg = messages.find(m => m.id === id);
+            if (msg) {
+                msg.unread = false;
+                renderMessages();
+                renderPreview(msg);
+                renderFolders();
+            }
+        }
+
+        function searchMessages() {
+            renderMessages();
+        }
+
+        function syncMessages() {
+            showToast('✓ Senkronizasyon tamamlandı');
+            renderMessages();
+        }
+
+        function refreshMessages() {
+            renderMessages();
+        }
+
+        function toggleUnified() {
+            renderMessages();
+        }
+
+        // ===== CONTACT AUTOCOMPLETE (compose-to) =====
+        let _suggIndex = -1;
+        let _suggList = [];
+        let _suggDebounce = null;
+
+        async function onComposeToInput(val) {
+            clearTimeout(_suggDebounce);
+            const dropdown = $('contact-suggestions');
+            if (val.length < 1) { hideSuggestions(); return; }
+            // Get current token (after last comma/semicolon)
+            const token = val.split(/[,;]/).pop().trim();
+            if (token.length < 1) { hideSuggestions(); return; }
+            _suggDebounce = setTimeout(async () => {
+                try {
+                    const r = await fetch('/contacts/suggest?q=' + encodeURIComponent(token));
+                    const data = await r.json();
+                    _suggList = data.suggestions || [];
+                    _suggIndex = -1;
+                    if (_suggList.length === 0) { hideSuggestions(); return; }
+                    dropdown.innerHTML = _suggList.map((s, i) => {
+                        const initials = s.name ? (s.name.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase()) : '?';
+                        return `<div class="sugg-item" data-i="${i}" onmousedown="selectSuggestion(${i})">
+                            <div class="sugg-avatar">${initials}</div>
+                            <div><div class="sugg-name">${escHtmlPreview(s.name)}</div>
+                                 <div class="sugg-email">${escHtmlPreview(s.email)}</div></div>
+                        </div>`;
+                    }).join('');
+                    dropdown.style.display = 'block';
+                } catch (e) { hideSuggestions(); }
+            }, 200);
+        }
+
+        function onComposeToKey(e) {
+            const dropdown = $('contact-suggestions');
+            const items = dropdown.querySelectorAll('.sugg-item');
+            if (!items.length) return;
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                _suggIndex = Math.min(_suggIndex + 1, items.length - 1);
+                items.forEach((el, i) => el.classList.toggle('active', i === _suggIndex));
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                _suggIndex = Math.max(_suggIndex - 1, 0);
+                items.forEach((el, i) => el.classList.toggle('active', i === _suggIndex));
+            } else if (e.key === 'Enter' || e.key === 'Tab') {
+                if (_suggIndex >= 0 && _suggList[_suggIndex]) {
+                    e.preventDefault();
+                    selectSuggestion(_suggIndex);
+                }
+            } else if (e.key === 'Escape') {
+                hideSuggestions();
+            }
+        }
+
+        function selectSuggestion(idx) {
+            const s = _suggList[idx];
+            if (!s) return;
+            const input = $('compose-to');
+            // Replace current token with selected email
+            const parts = input.value.split(/[,;]/);
+            parts[parts.length - 1] = ` ${s.name ? s.name + ' <' + s.email + '>' : s.email}`;
+            input.value = parts.join(', ').replace(/^,\s*/, '') + ', ';
+            hideSuggestions();
+            input.focus();
+        }
+
+        function hideSuggestions() {
+            const dropdown = $('contact-suggestions');
+            if (dropdown) { dropdown.style.display = 'none'; dropdown.innerHTML = ''; }
+            _suggIndex = -1; _suggList = [];
+        }
+
+        // Close when clicking outside
+        document.addEventListener('click', e => {
+            if (!e.target.closest('#compose-to-wrap')) hideSuggestions();
+        });
+
+        function escHtmlPreview(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // ===== COMPOSE =====
+        function openCompose(toAddress) {
+            $('compose-modal').style.display = 'flex';
+            if (toAddress) $('compose-to').value = toAddress + ', ';
+            $('compose-to').focus();
+            closeMobileMenu();
+        }
+
+        function closeCompose() {
+            $('compose-modal').style.display = 'none';
+            $('compose-to').value = '';
+            $('compose-subject').value = '';
+            $('compose-body').value = '';
+        }
+
+        function sendEmail() {
+            sendEmailWithUndo();
+        }
+
+        // ===== MESSAGE ACTIONS =====
+        function replyMessage(id) {
+            const msg = messages.find(m => m.id === id);
+            if (msg) {
+                openCompose();
+                $('compose-to').value = msg.email;
+                $('compose-subject').value = 'Re: ' + msg.subject;
+            }
+        }
+
+        function forwardMessage(id) {
+            const msg = messages.find(m => m.id === id);
+            if (msg) {
+                openCompose();
+                $('compose-subject').value = 'Fwd: ' + msg.subject;
+            }
+        }
+
+        function deleteMessage(id) {
+            if (confirm('Bu e-postayı silmek istediğinize emin misiniz?')) {
+                const idx = messages.findIndex(m => m.id === id);
+                if (idx !== -1) {
+                    messages[idx].folder = 'trash';
+                    selectedMessage = null;
+                    renderMessages();
+                    renderFolders();
+                    $('preview').innerHTML = '<div class="empty-state"><div class="empty-icon">🗑️</div><div class="empty-text">Mesaj silindi</div></div>';
+                    showToast('✓ Mesaj çöp kutusuna taşındı');
+                }
+            }
+        }
+
+        function downloadAttachment(name) {
+            showToast('📥 ' + name + ' indiriliyor...');
+        }
+
+        // ===== THEME =====
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? null : 'light';
+
+            if (newTheme) {
+                html.setAttribute('data-theme', 'light');
+                localStorage.setItem('mailora-theme', 'light');
+                updateThemeButtons('☀️');
+            } else {
+                html.removeAttribute('data-theme');
+                localStorage.setItem('mailora-theme', 'dark');
+                updateThemeButtons('🌙');
+            }
+        }
+
+        function updateThemeButtons(icon) {
+            $('theme-btn').textContent = icon;
+            const mobileBtn = $('theme-btn-mobile');
+            if (mobileBtn) mobileBtn.textContent = icon;
+        }
+
+        // ===== MOBILE MENU =====
+        function toggleMobileMenu() {
+            const sidebar = $('sidebar');
+            const overlay = $('sidebar-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
+        function closeMobileMenu() {
+            const sidebar = $('sidebar');
+            const overlay = $('sidebar-overlay');
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        }
+
+        // ===== KEYBOARD SHORTCUTS =====
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            const currentIdx = filteredMessages.findIndex(m => m.id === selectedMessage);
+
+            if (e.key === 'j' && currentIdx < filteredMessages.length - 1) {
+                selectMessage(filteredMessages[currentIdx + 1].id);
+            } else if (e.key === 'k' && currentIdx > 0) {
+                selectMessage(filteredMessages[currentIdx - 1].id);
+            } else if (e.key === 'c') {
+                openCompose();
+            } else if (e.key === '/' || e.key === 'f') {
+                e.preventDefault();
+                $('search-input').focus();
+            } else if (e.key === 'Escape') {
+                closeCompose();
+                closeMobileMenu();
+            }
+        });
+
+        // ===== NEW FEATURES =====
+
+        // Pin/Unpin
+        function togglePin(id, e) {
+            e?.stopPropagation();
+            const msg = messages.find(m => m.id === id);
+            if (msg) {
+                msg.pinned = !msg.pinned;
+                msg.important = msg.pinned;
+                renderMessages();
+                showToast(msg.pinned ? '📌 Sabitlendi' : '📌 Sabitleme kaldırıldı');
+            }
+        }
+
+        // Snooze
+        function snoozeMessage(id, duration, e) {
+            e?.stopPropagation();
+            showToast(`⏰ ${duration} sonra hatırlatılacak`);
+        }
+
+        // Focus Mode
+        function toggleFocusMode() {
+            const checked = $('focus-check')?.checked;
+            $('message-list')?.classList.toggle('focus-mode', checked);
+            showToast(checked ? '🎯 Odak Modu: Açık' : '🎯 Odak Modu: Kapalı');
+        }
+
+        // Analytics
+        function toggleAnalytics() {
+            $('analytics-drawer')?.classList.toggle('open');
+        }
+
+        // Contact Insights
+        function openContactInsights(msg, e) {
+            e?.stopPropagation();
+            const color = getAvatarColor(msg.from);
+            $('contact-avatar').textContent = getInitials(msg.from);
+            $('contact-avatar').style.background = color;
+            $('contact-name').textContent = msg.from;
+            $('contact-email').textContent = msg.email;
+            $('contact-drawer')?.classList.add('open');
+        }
+
+        function closeContactDrawer() {
+            $('contact-drawer')?.classList.remove('open');
+        }
+
+        function showAttachmentGallery() {
+            showToast('📎 Tüm ekler gösteriliyor...');
+            closeContactDrawer();
+        }
+
+        // Translate
+        function translateEmail(lang) {
+            const translations = {
+                'en': 'This email has been translated to English.',
+                'de': 'Diese E-Mail wurde ins Deutsche übersetzt.',
+                'fr': 'Cet email a été traduit en français.',
+                'es': 'Este correo ha sido traducido al español.',
+                'ar': 'تمت ترجمة هذا البريد الإلكتروني إلى العربية.'
+            };
+            showToast(`🌍 ${lang.toUpperCase()}'e çevrildi`);
+        }
+
+        // Quick Reply
+        function quickReply(text) {
+            showToast(`✓ Yanıt gönderildi: "${text}"`);
+        }
+
+        // Smart Unsubscribe
+        function smartUnsubscribe(email) {
+            showToast(`🚫 ${email} aboneliği iptal edildi`);
+        }
+
+        // Reading Time Calculator
+        function getReadingTime(body) {
+            const words = body?.replace(/<[^>]*>/g, '').split(/\s+/).length || 0;
+            const mins = Math.ceil(words / 200);
+            return mins < 1 ? '<1' : mins;
+        }
+
+        // Undo Send with timer
+        let undoTimeout = null;
+        function sendEmailWithUndo() {
+            const to = $('compose-to').value;
+            const subject = $('compose-subject').value;
+            const scheduled = $('schedule-check')?.checked;
+            const scheduleTime = $('schedule-time')?.value;
+
+            if (!to || !subject) {
+                alert('Kime ve Konu alanları zorunludur!');
+                return;
+            }
+
+            closeCompose();
+
+            if (scheduled && scheduleTime) {
+                showToast(`📅 E-posta ${new Date(scheduleTime).toLocaleString('tr-TR')} için zamanlandı`);
+                return;
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'toast undo';
+            toast.innerHTML = `Gönderiliyor... <button class="undo-btn" onclick="cancelSend(this)">İptal</button>`;
+            document.body.appendChild(toast);
+
+            undoTimeout = setTimeout(() => {
+                toast.remove();
+                showToast('✓ E-posta gönderildi!');
+            }, 5000);
+        }
+
+        function cancelSend(btn) {
+            clearTimeout(undoTimeout);
+            btn.parentElement.remove();
+            showToast('↩️ Gönderim iptal edildi');
+            openCompose();
+        }
+
+        // Schedule checkbox toggle
+        $('schedule-check')?.addEventListener('change', function () {
+            $('schedule-time').style.display = this.checked ? 'block' : 'none';
+        });
+
+        // ===== INIT =====
+        (function init() {
+            // Load saved theme
+            const savedTheme = localStorage.getItem('mailora-theme');
+            if (savedTheme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                setTimeout(() => updateThemeButtons('☀️'), 0);
+            }
+
+            // Add pinned and important flags to some messages
+            messages[0].pinned = true;
+            messages[0].important = true;
+            messages[2].important = true;
+            messages[4].isNewsletter = true;
+
+            // Render initial state
+            renderAccounts();
+            renderFolders();
+            renderMessages();
+
+            // Schedule checkbox handler
+            const scheduleCheck = $('schedule-check');
+            if (scheduleCheck) {
+                scheduleCheck.addEventListener('change', function () {
+                    $('schedule-time').style.display = this.checked ? 'block' : 'none';
+                });
+            }
+
+            // Initialize Drag & Drop
+            initDragDrop();
+        })();
+
+        // ===== FILE ATTACHMENT FUNCTIONS =====
+        let attachedFiles = [];
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+        function initDragDrop() {
+            const dropzone = $('dropzone');
+            if (!dropzone) return;
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropzone.addEventListener(eventName, () => dropzone.classList.add('dragover'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, () => dropzone.classList.remove('dragover'), false);
+            });
+
+            dropzone.addEventListener('drop', handleDrop, false);
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            [...files].forEach(file => {
+                if (file.size > MAX_FILE_SIZE) {
+                    showAttachmentError(`${file.name} çok büyük (maks. 10MB)`);
+                    return;
+                }
+
+                if (attachedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    showAttachmentError(`${file.name} zaten ekli`);
+                    return;
+                }
+
+                attachedFiles.push(file);
+                renderAttachmentPreview(file);
+            });
+
+            // Clear the input for re-selection
+            $('compose-files').value = '';
+        }
+
+        function renderAttachmentPreview(file) {
+            const previewContainer = $('attachment-preview');
+            const isImage = file.type.startsWith('image/');
+            const fileId = `file-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+            const item = document.createElement('div');
+            item.className = `attachment-item ${isImage ? 'image' : ''}`;
+            item.id = fileId;
+            item.dataset.fileName = file.name;
+
+            if (isImage) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    item.innerHTML = `
+                        <img src="${e.target.result}" class="preview-img" alt="${file.name}">
+                        <div class="file-info">
+                            <span class="file-name">${file.name}</span>
+                            <span class="file-size">${formatFileSize(file.size)}</span>
+                        </div>
+                        <button class="remove-btn" onclick="removeAttachment('${fileId}', '${file.name}')">✕</button>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                item.innerHTML = `
+                    <span class="file-icon">${getFileIcon(file.type)}</span>
+                    <div class="file-info">
+                        <span class="file-name">${file.name}</span>
+                        <span class="file-size">${formatFileSize(file.size)}</span>
+                    </div>
+                    <button class="remove-btn" onclick="removeAttachment('${fileId}', '${file.name}')">✕</button>
+                `;
+            }
+
+            previewContainer.appendChild(item);
+        }
+
+        function removeAttachment(fileId, fileName) {
+            const item = document.getElementById(fileId);
+            if (item) {
+                item.style.animation = 'slideIn 0.2s ease-out reverse';
+                setTimeout(() => item.remove(), 200);
+            }
+            attachedFiles = attachedFiles.filter(f => f.name !== fileName);
+        }
+
+        function clearAttachments() {
+            attachedFiles = [];
+            const previewContainer = $('attachment-preview');
+            if (previewContainer) previewContainer.innerHTML = '';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        function getFileIcon(mimeType) {
+            if (mimeType.startsWith('image/')) return '🖼️';
+            if (mimeType.includes('pdf')) return '📄';
+            if (mimeType.includes('word') || mimeType.includes('document')) return '📝';
+            if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return '📊';
+            if (mimeType.includes('powerpoint') || mimeType.includes('presentation')) return '📽️';
+            if (mimeType.includes('zip') || mimeType.includes('rar') || mimeType.includes('archive')) return '📦';
+            if (mimeType.includes('audio')) return '🎵';
+            if (mimeType.includes('video')) return '🎬';
+            return '📎';
+        }
+
+        function showAttachmentError(message) {
+            const section = $('attachment-section');
+            const existingError = section.querySelector('.attachment-error');
+            if (existingError) existingError.remove();
+
+            const error = document.createElement('div');
+            error.className = 'attachment-error';
+            error.innerHTML = `⚠️ ${message}`;
+            section.appendChild(error);
+
+            setTimeout(() => error.remove(), 3000);
+        }
+
+        function getAttachedFiles() {
+            return attachedFiles;
+        }
+    </script>
+</body>
+
+</html>

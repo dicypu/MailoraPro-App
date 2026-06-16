@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hesap Ekle - Mailora Hub</title>
+    <style>
+        :root {
+            --bg-body: #0f1217;
+            --bg-panel: #111827;
+            --bg-input: #1f2937;
+            --border: #334155;
+            --text-main: #e5e7eb;
+            --text-muted: #94a3b8;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .container {
+            background: var(--bg-panel);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid #1f2937;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 18px;
+            color: var(--text-main);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 13px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #1f2937;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button.primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            font-weight: 600;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button.link-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            text-decoration: underline;
+            font-size: 12px;
+            margin-top: 10px;
+            width: auto;
+            display: inline-block;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-top: 16px;
+            text-align: center;
+            font-size: 12px;
+            min-height: 1.5rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .manual-grid {
+            display: grid;
+            grid-template-columns: 1fr 80px;
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Yeni Hesap Ekle</h1>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">E-posta Adresi</label>
+                <input type="email" id="email" required placeholder="ornek@alanadi.com">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Şifre / App Password</label>
+                <input type="password" id="password" required placeholder="••••••••">
+            </div>
+
+            <div id="manualConfig" class="hidden">
+                <div class="form-group">
+                    <label>Gelen Sunucusu (IMAP)</label>
+                    <div class="manual-grid">
+                        <input type="text" id="imapHost" placeholder="imap.sunucu.com">
+                        <input type="number" id="imapPort" placeholder="993" value="993">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Giden Sunucusu (SMTP)</label>
+                    <div class="manual-grid">
+                        <input type="text" id="smtpHost" placeholder="smtp.sunucu.com">
+                        <input type="number" id="smtpPort" placeholder="587" value="587">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" id="btnSubmit" class="primary">Giriş Yap</button>
+
+            <div style="text-align: center; margin-top: 10px;">
+                <button type="button" id="toggleManual" class="link-btn">Manuel Kurulum</button>
+            </div>
+
+            <div class="status" id="status"></div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="/static/app.html" style="color: #6b7280; font-size: 12px; text-decoration: none;">&larr; Geri
+                    Dön</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const status = document.getElementById('status');
+        const manualConfig = document.getElementById('manualConfig');
+        const btn = document.getElementById('btnSubmit');
+        const toggleBtn = document.getElementById('toggleManual');
+
+        let isManual = false;
+
+        toggleBtn.addEventListener('click', () => {
+            isManual = !isManual;
+            manualConfig.classList.toggle('hidden', !isManual);
+            toggleBtn.textContent = isManual ? "Otomatik Kurulum" : "Manuel Kurulum";
+            btn.textContent = isManual ? "Giriş Yap (Manuel)" : "Giriş Yap";
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (isManual) {
+                // Direct login with manual details
+                await performLogin({
+                    email,
+                    password,
+                    provider: 'custom',
+                    imap_host: document.getElementById('imapHost').value.trim(),
+                    imap_port: Number(document.getElementById('imapPort').value),
+                    smtp_host: document.getElementById('smtpHost').value.trim(),
+                    smtp_port: Number(document.getElementById('smtpPort').value)
+                });
+                return;
+            }
+
+            // Step 1: Discover
+            status.textContent = "Sunucu ayarları aranıyor...";
+            status.style.color = "#93c5fd";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/discover', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                if (!res.ok) throw new Error("Automatic discovery failed");
+
+                const config = await res.json();
+
+                // Populate form with discovered settings
+                document.getElementById('imapHost').value = config.imap.host;
+                document.getElementById('imapPort').value = config.imap.port;
+                document.getElementById('smtpHost').value = config.smtp.host;
+                document.getElementById('smtpPort').value = config.smtp.port;
+
+                // Show settings for review
+                manualConfig.classList.remove('hidden');
+                isManual = true;
+                toggleBtn.textContent = "Otomatik Kurulum";
+
+                // Prompt user to review
+                status.textContent = `${config.source} üzerinden ayarlar bulundu. Lütfen kontrol edip onaylayın.`;
+                status.style.color = "#fbbf24"; // amber-400 (warning/attention color)
+                btn.textContent = "Onayla ve Giriş Yap";
+                btn.disabled = false;
+
+            } catch (err) {
+                status.textContent = "Ayarlar otomatik bulunamadı. Lütfen manuel giriniz.";
+                status.style.color = "#f87171"; // red-400
+                manualConfig.classList.remove('hidden');
+                isManual = true;
+                toggleBtn.textContent = "Otomatik Kurulum";
+                btn.disabled = false;
+                btn.textContent = "Giriş Yap (Manuel)";
+            }
+        });
+
+        async function performLogin(data) {
+            status.textContent = "Bilgiler doğrulanıyor...";
+            status.style.color = "#93c5fd";
+
+            try {
+                // Actual POST request to backend
+                const r = await fetch('/accounts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const j = await r.json().catch(() => ({}));
+
+                if (r.ok && j.success) {
+                    status.textContent = "Hesap başarıyla eklendi! Yönlendiriliyorsunuz...";
+                    status.style.color = "#4ade80"; // green-400
+                    setTimeout(() => {
+                        window.location.href = '/static/app.html';
+                    }, 1000);
+                } else {
+                    throw new Error(j.message || "Giriş başarısız oldu.");
+                }
+            } catch (e) {
+                status.textContent = "Hata: " + e.message;
+                status.style.color = "#f87171";
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>

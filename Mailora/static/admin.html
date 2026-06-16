@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,147 +9,726 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/premium.css">
     <style>
-        .app { grid-template-columns: 260px 1fr; }
-        .admin-main { grid-row: 2; overflow-y: auto; padding: 24px; }
+        .app {
+            grid-template-columns: 260px 1fr;
+        }
 
-        .nav-link { padding: 10px 14px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); transition: var(--transition); margin-bottom: 2px; text-decoration: none; }
-        .nav-link:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
-        .nav-link.active { background: rgba(59,130,246,0.15); color: var(--accent-blue); font-weight: 500; }
+        .admin-main {
+            grid-row: 2;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .nav-link {
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            margin-bottom: 2px;
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+            font-weight: 500;
+        }
 
         /* Admin Sub-nav */
-        .admin-subnav { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
-        .admin-subnav-item { padding: 8px 18px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 500; transition: var(--transition); }
-        .admin-subnav-item:hover { border-color: var(--accent-blue); color: var(--text-primary); }
-        .admin-subnav-item.active { background: var(--gradient-primary); color: #fff; border-color: transparent; }
+        .admin-subnav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .admin-subnav-item {
+            padding: 8px 18px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .admin-subnav-item:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .admin-subnav-item.active {
+            background: var(--gradient-primary);
+            color: #fff;
+            border-color: transparent;
+        }
 
         /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
-        .stat-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 14px; padding: 20px; transition: var(--transition); position: relative; overflow: hidden; }
-        .stat-box:hover { border-color: var(--accent-blue); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
-        .stat-box::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 14px 14px 0 0; }
-        .stat-box.blue::after { background: var(--accent-blue); }
-        .stat-box.purple::after { background: var(--accent-purple); }
-        .stat-box.green::after { background: var(--accent-green); }
-        .stat-box.red::after { background: var(--accent-red); }
-        .stat-box.orange::after { background: var(--accent-orange); }
-        .stat-icon { font-size: 28px; margin-bottom: 8px; }
-        .stat-number { font-size: 32px; font-weight: 700; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-        .stat-title { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
-        .stat-change { font-size: 11px; margin-top: 6px; padding: 2px 8px; border-radius: 4px; display: inline-block; }
-        .stat-change.up { background: rgba(16,185,129,0.15); color: var(--accent-green); }
-        .stat-change.down { background: rgba(239,68,68,0.15); color: var(--accent-red); }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-box::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 14px 14px 0 0;
+        }
+
+        .stat-box.blue::after {
+            background: var(--accent-blue);
+        }
+
+        .stat-box.purple::after {
+            background: var(--accent-purple);
+        }
+
+        .stat-box.green::after {
+            background: var(--accent-green);
+        }
+
+        .stat-box.red::after {
+            background: var(--accent-red);
+        }
+
+        .stat-box.orange::after {
+            background: var(--accent-orange);
+        }
+
+        .stat-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-title {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .stat-change {
+            font-size: 11px;
+            margin-top: 6px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .stat-change.up {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+        }
+
+        .stat-change.down {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+        }
 
         /* Charts Section */
-        .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
-        @media (max-width: 900px) { .charts-row { grid-template-columns: 1fr; } }
-        .chart-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
-        .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-        .chart-title { font-size: 14px; font-weight: 600; }
-        .chart-period { font-size: 11px; color: var(--text-muted); }
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        @media (max-width: 900px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .chart-period {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
 
         /* Bar Chart */
-        .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 160px; padding-top: 10px; }
-        .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-        .bar-fill { width: 100%; border-radius: 6px 6px 0 0; transition: height 0.6s ease; min-height: 4px; cursor: pointer; position: relative; }
-        .bar-fill:hover { filter: brightness(1.3); }
-        .bar-fill::after { content: attr(data-val); position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--text-muted); opacity: 0; transition: opacity .2s; }
-        .bar-fill:hover::after { opacity: 1; }
-        .bar-label { font-size: 10px; color: var(--text-muted); }
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 160px;
+            padding-top: 10px;
+        }
+
+        .bar-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bar-fill {
+            width: 100%;
+            border-radius: 6px 6px 0 0;
+            transition: height 0.6s ease;
+            min-height: 4px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .bar-fill:hover {
+            filter: brightness(1.3);
+        }
+
+        .bar-fill::after {
+            content: attr(data-val);
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: var(--text-muted);
+            opacity: 0;
+            transition: opacity .2s;
+        }
+
+        .bar-fill:hover::after {
+            opacity: 1;
+        }
+
+        .bar-label {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
 
         /* Donut Chart */
-        .donut-container { display: flex; align-items: center; gap: 24px; }
-        .donut-svg { width: 140px; height: 140px; }
-        .donut-legend { flex: 1; }
-        .donut-legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; }
-        .donut-legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
-        .donut-legend-val { margin-left: auto; font-weight: 600; color: var(--text-primary); }
+        .donut-container {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .donut-svg {
+            width: 140px;
+            height: 140px;
+        }
+
+        .donut-legend {
+            flex: 1;
+        }
+
+        .donut-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .donut-legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .donut-legend-val {
+            margin-left: auto;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
 
         /* Logs Section */
-        .logs-section { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 28px; }
-        .logs-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-        .logs-title { font-size: 14px; font-weight: 600; }
-        .logs-filter { display: flex; gap: 4px; }
-        .log-filter-btn { padding: 4px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-size: 11px; font-family: inherit; transition: var(--transition); }
-        .log-filter-btn:hover, .log-filter-btn.active { border-color: var(--accent-blue); color: var(--accent-blue); background: rgba(59,130,246,0.1); }
-        .log-list { max-height: 400px; overflow-y: auto; }
-        .log-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; margin-bottom: 4px; transition: var(--transition); font-size: 12px; }
-        .log-row:hover { background: rgba(255,255,255,0.03); }
-        .log-level { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; min-width: 50px; text-align: center; }
-        .log-level.info { background: rgba(59,130,246,0.2); color: var(--accent-blue); }
-        .log-level.warn { background: rgba(245,158,11,0.2); color: var(--accent-orange); }
-        .log-level.error { background: rgba(239,68,68,0.2); color: var(--accent-red); }
-        .log-level.success { background: rgba(16,185,129,0.2); color: var(--accent-green); }
-        .log-time { font-size: 11px; color: var(--text-muted); font-family: 'Courier New', monospace; min-width: 70px; }
-        .log-source { color: var(--accent-purple); font-weight: 500; min-width: 80px; }
-        .log-msg { color: var(--text-secondary); flex: 1; }
+        .logs-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 28px;
+        }
+
+        .logs-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .logs-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .logs-filter {
+            display: flex;
+            gap: 4px;
+        }
+
+        .log-filter-btn {
+            padding: 4px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 11px;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .log-filter-btn:hover,
+        .log-filter-btn.active {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .log-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .log-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            transition: var(--transition);
+            font-size: 12px;
+        }
+
+        .log-row:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .log-level {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .log-level.info {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-blue);
+        }
+
+        .log-level.warn {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-orange);
+        }
+
+        .log-level.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+        }
+
+        .log-level.success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-green);
+        }
+
+        .log-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'Courier New', monospace;
+            min-width: 70px;
+        }
+
+        .log-source {
+            color: var(--accent-purple);
+            font-weight: 500;
+            min-width: 80px;
+        }
+
+        .log-msg {
+            color: var(--text-secondary);
+            flex: 1;
+        }
 
         /* Users Table */
-        .users-section { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 28px; }
-        .user-table { width: 100%; border-collapse: collapse; }
-        .user-table th { text-align: left; padding: 10px 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); border-bottom: 1px solid var(--border); }
-        .user-table td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
-        .user-table tr:hover td { background: rgba(255,255,255,0.02); }
-        .user-avatar { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 13px; }
-        .user-name-cell { display: flex; align-items: center; gap: 10px; }
-        .user-email { font-size: 11px; color: var(--text-muted); }
-        .role-badge { padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 600; }
-        .role-badge.admin { background: rgba(239,68,68,0.15); color: var(--accent-red); }
-        .role-badge.editor { background: rgba(139,92,246,0.15); color: var(--accent-purple); }
-        .role-badge.viewer { background: rgba(59,130,246,0.15); color: var(--accent-blue); }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-        .status-dot.online { background: var(--accent-green); box-shadow: 0 0 6px var(--accent-green); }
-        .status-dot.offline { background: var(--text-muted); }
+        .users-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 28px;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .user-table th {
+            text-align: left;
+            padding: 10px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .user-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .user-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #fff;
+            font-size: 13px;
+        }
+
+        .user-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-email {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .role-badge {
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .role-badge.admin {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+        }
+
+        .role-badge.editor {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--accent-purple);
+        }
+
+        .role-badge.viewer {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .status-dot.online {
+            background: var(--accent-green);
+            box-shadow: 0 0 6px var(--accent-green);
+        }
+
+        .status-dot.offline {
+            background: var(--text-muted);
+        }
 
         /* Sidebar admin menu */
-        .admin-sidebar-section { margin-top: 16px; }
-        .admin-menu-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; color: var(--text-secondary); transition: var(--transition); margin-bottom: 2px; }
-        .admin-menu-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
-        .admin-menu-item.active { color: var(--accent-blue); background: rgba(59,130,246,0.1); }
-        .admin-menu-badge { margin-left: auto; background: var(--accent-red); color: #fff; font-size: 9px; padding: 1px 6px; border-radius: 10px; font-weight: 700; }
+        .admin-sidebar-section {
+            margin-top: 16px;
+        }
+
+        .admin-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            margin-bottom: 2px;
+        }
+
+        .admin-menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .admin-menu-item.active {
+            color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .admin-menu-badge {
+            margin-left: auto;
+            background: var(--accent-red);
+            color: #fff;
+            font-size: 9px;
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            padding: 24px;
+            border-radius: 14px;
+            width: 500px;
+            max-width: 90%;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .modal-content h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .account-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .account-chip {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .account-chip.assigned {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--accent-blue);
+        }
+
+        .account-chip button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 10px;
+            padding: 2px 6px;
+        }
+
+        .account-chip.assigned button {
+            color: var(--accent-blue);
+        }
+
+        .form-btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .form-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .form-btn.secondary {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .form-btn.secondary:hover {
+            color: var(--text-primary);
+        }
+        
+        .form-btn.danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+        }
+        .form-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        select.form-select {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
     </style>
 </head>
+
 <body>
     <div class="app">
         <!-- Header -->
         <header class="header">
             <div class="logo">
-                <div class="logo-icon">✉</div>
+                <img src="/static/logo.png" style="height:28px; width:auto; object-fit:contain; background:transparent; border-radius:6px; margin-right:8px;">
                 <span class="logo-text">Mailora</span>
             </div>
             <div class="header-actions">
                 <button class="compose-btn" onclick="exportReport()">📊 Rapor İndir</button>
                 <button class="icon-btn" onclick="refreshLogs()" title="Yenile">🔄</button>
+                <div style="position:relative;">
+                    <button class="icon-btn" onclick="document.getElementById('app-launcher').classList.toggle('open')" title="Uygulamalar">▦</button>
+                    <!-- Apps Dropdown -->
+                    <div id="app-launcher" class="apps-dropdown">
+                        <a href="/static/index.html" class="app-icon">
+                            <span class="app-icon-img">✉️</span>
+                            <span class="app-icon-label">E-posta</span>
+                        </a>
+                        <a href="/static/calendar.html" class="app-icon">
+                            <span class="app-icon-img">📅</span>
+                            <span class="app-icon-label">Takvim</span>
+                        </a>
+                        <a href="/static/sheets.html" class="app-icon">
+                            <span class="app-icon-img">📊</span>
+                            <span class="app-icon-label">Tablo</span>
+                        </a>
+                        <a href="/static/admin.html" class="app-icon">
+                            <span class="app-icon-img">🛡️</span>
+                            <span class="app-icon-label">Admin</span>
+                        </a>
+                    </div>
+                </div>
                 <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" title="Tema">🌙</button>
             </div>
         </header>
 
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="section-label">Navigasyon</div>
-            <a href="index.html" class="nav-link">📥 Inbox</a>
-            <a href="calendar.html" class="nav-link">📅 Takvim</a>
-            <a href="sheets.html" class="nav-link">📊 Tablo</a>
-            <a href="admin.html" class="nav-link active">🛡️ Admin Panel</a>
 
             <div class="section-label" style="margin-top:20px">Yönetim</div>
             <div class="admin-sidebar-section">
                 <div class="admin-menu-item active" onclick="showSection('dashboard')">📈 Dashboard</div>
-                <div class="admin-menu-item" onclick="showSection('logs')">📋 Sistem Logları <span class="admin-menu-badge">12</span></div>
+                <div class="admin-menu-item" onclick="showSection('logs')">📋 Sistem Logları <span
+                        class="admin-menu-badge" id="log-badge">0</span></div>
                 <div class="admin-menu-item" onclick="showSection('users')">👥 Kullanıcılar</div>
+                <div class="admin-menu-item" onclick="showSection('accounts')">🔑 Hesaplar</div>
                 <div class="admin-menu-item" onclick="showSection('ai')">🤖 AI Raporları</div>
-                <div class="admin-menu-item" onclick="showSection('security')">🔒 Güvenlik</div>
             </div>
 
             <div class="section-label" style="margin-top:20px">Sistem Durumu</div>
-            <div style="padding:12px;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;font-size:11px">
-                <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>CPU</span><strong style="color:var(--accent-green)">23%</strong></div>
-                <div style="height:4px;background:var(--border);border-radius:2px;margin-bottom:10px"><div style="height:100%;width:23%;background:var(--accent-green);border-radius:2px"></div></div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>RAM</span><strong style="color:var(--accent-blue)">61%</strong></div>
-                <div style="height:4px;background:var(--border);border-radius:2px;margin-bottom:10px"><div style="height:100%;width:61%;background:var(--accent-blue);border-radius:2px"></div></div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>GPU VRAM</span><strong style="color:var(--accent-purple)">45%</strong></div>
-                <div style="height:4px;background:var(--border);border-radius:2px;margin-bottom:10px"><div style="height:100%;width:45%;background:var(--accent-purple);border-radius:2px"></div></div>
-                <div style="display:flex;justify-content:space-between"><span>Disk</span><strong style="color:var(--accent-orange)">72%</strong></div>
-                <div style="height:4px;background:var(--border);border-radius:2px"><div style="height:100%;width:72%;background:var(--accent-orange);border-radius:2px"></div></div>
+            <div
+                style="padding:12px;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;font-size:11px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>CPU</span><strong
+                        style="color:var(--accent-green)">23%</strong></div>
+                <div style="height:4px;background:var(--border);border-radius:2px;margin-bottom:10px">
+                    <div style="height:100%;width:23%;background:var(--accent-green);border-radius:2px"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>RAM</span><strong
+                        style="color:var(--accent-blue)">61%</strong></div>
+                <div style="height:4px;background:var(--border);border-radius:2px;margin-bottom:10px">
+                    <div style="height:100%;width:61%;background:var(--accent-blue);border-radius:2px"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>GPU VRAM</span><strong
+                        style="color:var(--accent-purple)">45%</strong></div>
+                <div style="height:4px;background:var(--border);border-radius:2px;margin-bottom:10px">
+                    <div style="height:100%;width:45%;background:var(--accent-purple);border-radius:2px"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between"><span>Disk</span><strong
+                        style="color:var(--accent-orange)">72%</strong></div>
+                <div style="height:4px;background:var(--border);border-radius:2px">
+                    <div style="height:100%;width:72%;background:var(--accent-orange);border-radius:2px"></div>
+                </div>
             </div>
         </aside>
 
@@ -159,6 +739,7 @@
                 <button class="admin-subnav-item active" onclick="showSection('dashboard',this)">📈 Dashboard</button>
                 <button class="admin-subnav-item" onclick="showSection('logs',this)">📋 Loglar</button>
                 <button class="admin-subnav-item" onclick="showSection('users',this)">👥 Kullanıcılar</button>
+                <button class="admin-subnav-item" onclick="showSection('accounts',this)">🔑 Hesaplar</button>
                 <button class="admin-subnav-item" onclick="showSection('ai',this)">🤖 AI Raporları</button>
             </div>
 
@@ -251,13 +832,37 @@
                 <div class="users-section">
                     <div class="logs-header">
                         <span class="logs-title">👥 Kullanıcı Yönetimi</span>
-                        <button class="compose-btn" style="font-size:12px;padding:6px 14px">➕ Kullanıcı Ekle</button>
+                        <button class="compose-btn" style="font-size:12px;padding:6px 14px" onclick="document.getElementById('add-user-modal').style.display='flex'; document.getElementById('add-user-username').value=''; document.getElementById('add-user-password').value='';">➕ Kullanıcı Ekle</button>
                     </div>
                     <table class="user-table">
                         <thead>
-                            <tr><th>Kullanıcı</th><th>Rol</th><th>Durum</th><th>Son Giriş</th><th>E-posta Sayısı</th></tr>
+                            <tr>
+                                <th>Kullanıcı</th>
+                                <th>Rol</th>
+                                <th>Yetkiler</th>
+                                <th>İşlemler</th>
+                            </tr>
                         </thead>
                         <tbody id="user-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Accounts Section -->
+            <div id="section-accounts" style="display:none">
+                <div class="users-section">
+                    <div class="logs-header">
+                        <span class="logs-title">🔑 Hesap Yönetimi</span>
+                    </div>
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Hesap (Email)</th>
+                                <th>Renk</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="accounts-table-body"></tbody>
                     </table>
                 </div>
             </div>
@@ -294,46 +899,137 @@
                     <div class="bar-chart" id="ai-daily-chart" style="height:140px"></div>
                 </div>
             </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="add-user-modal" class="modal">
+        <div class="modal-content">
+            <h3>Yeni Kullanıcı Ekle</h3>
+            <div style="margin-bottom:12px">
+                <label style="display:block; margin-bottom:4px; font-size:12px; color:var(--text-muted);">Kullanıcı Adı</label>
+                <input id="add-user-username" style="width:100%; padding:8px; background:var(--bg-primary); border:1px solid var(--border); color:var(--text-primary); border-radius:6px; box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:12px">
+                <label style="display:block; margin-bottom:4px; font-size:12px; color:var(--text-muted);">Şifre</label>
+                <input type="password" id="add-user-password" style="width:100%; padding:8px; background:var(--bg-primary); border:1px solid var(--border); color:var(--text-primary); border-radius:6px; box-sizing:border-box;">
+            </div>
+            <div style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px;">
+                <button class="form-btn secondary" onclick="document.getElementById('add-user-modal').style.display='none'">İptal</button>
+                <button class="form-btn" onclick="submitAddUser()">Ekle</button>
+            </div>
+        </div>
+    </div>
+    <div id="edit-account-modal" class="modal">
+        <div class="modal-content">
+            <h3>Hesap Düzenle</h3>
+            <input type="hidden" id="edit-acc-id">
+            <div style="margin-bottom:12px">
+                <label style="display:block; margin-bottom:4px; font-size:12px; color:var(--text-muted);">Email</label>
+                <input id="edit-acc-email" disabled
+                    style="width:100%; padding:8px; background:var(--bg-tertiary); border:1px solid var(--border); color:var(--text-muted); border-radius:6px; box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:12px">
+                <label style="display:block; margin-bottom:4px; font-size:12px; color:var(--text-muted);">CalDAV Takvim URL'i</label>
+                <input id="edit-acc-caldav" placeholder="https://caldav.example.com/principals/user/"
+                    style="width:100%; padding:8px; background:var(--bg-primary); border:1px solid var(--border); color:var(--text-primary); border-radius:6px; box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:12px">
+                <label style="display:block; margin-bottom:4px; font-size:12px; color:var(--text-muted);">CardDAV Kişiler URL'i</label>
+                <input id="edit-acc-carddav" placeholder="https://carddav.example.com/principals/user/"
+                    style="width:100%; padding:8px; background:var(--bg-primary); border:1px solid var(--border); color:var(--text-primary); border-radius:6px; box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:12px">
+                <label style="display:block; margin-bottom:4px; font-size:12px; color:var(--text-muted);">Renk</label>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <input type="color" id="edit-acc-color"
+                        style="height:40px; width:60px; border:none; padding:0; background:none;">
+                    <span id="color-hex" style="font-family:monospace; color:var(--text-muted); font-size:12px"></span>
+                </div>
+            </div>
+            <div style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px;">
+                <button class="form-btn secondary" onclick="closeEditModal()">İptal</button>
+                <button class="form-btn" onclick="saveAccountSettings()">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="accounts-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Mail Kutusu Yetkileri</h3>
+            <div id="modal-accounts" class="account-list"></div>
+            <div style="margin-top:20px; display:flex; justify-content:flex-end;">
+                <button class="form-btn secondary" onclick="closeModal()">Kapat</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Log Data
-        const logs = [
-            { time: '15:42:18', level: 'info', source: 'API', msg: 'POST /analyze — 200 OK (342ms)' },
-            { time: '15:41:05', level: 'success', source: 'AI', msg: 'Konu modeli v3 başarıyla yüklendi (VRAM: 1.2GB)' },
-            { time: '15:40:33', level: 'info', source: 'Auth', msg: 'Kullanıcı ali@gmail.com giriş yaptı' },
-            { time: '15:38:12', level: 'warn', source: 'SMTP', msg: 'Bağlantı zaman aşımı — yeniden deneniyor (2/3)' },
-            { time: '15:35:47', level: 'error', source: 'NER', msg: 'Model yükleme hatası: CUDA out of memory — lazy unload tetiklendi' },
-            { time: '15:34:20', level: 'success', source: 'AI', msg: 'Smart Reply: 3 yanıt üretildi (Beam Search, 0.7s)' },
-            { time: '15:30:11', level: 'info', source: 'API', msg: 'POST /translate — 200 OK (1.8s, MarianMT en→tr)' },
-            { time: '15:28:44', level: 'info', source: 'System', msg: 'VRAM temizlendi: torch.cuda.empty_cache() çağrıldı' },
-            { time: '15:25:03', level: 'warn', source: 'IMAP', msg: 'Sertifika uyarısı: SSL doğrulama atlandı' },
-            { time: '15:22:18', level: 'success', source: 'AI', msg: 'Özetleme tamamlandı: bert2bert (420ms)' },
-            { time: '15:20:00', level: 'info', source: 'API', msg: 'Sunucu başlatıldı — http://localhost:5000 (GPU: CUDA)' },
-            { time: '15:19:55', level: 'info', source: 'System', msg: 'Duygu Modeli yüklendi (Accuracy: 89%)' },
-        ];
 
-        // Users Data
-        const users = [
-            { name: 'Ali Yılmaz', email: 'ali@gmail.com', role: 'admin', online: true, lastLogin: '15 dk önce', emails: 342, color: '#3b82f6' },
-            { name: 'Ayşe Şahin', email: 'ayse@firma.com', role: 'editor', online: true, lastLogin: '1 saat önce', emails: 218, color: '#8b5cf6' },
-            { name: 'Mehmet Kaya', email: 'mehmet@firma.com', role: 'viewer', online: false, lastLogin: 'Dün', emails: 156, color: '#10b981' },
-            { name: 'Fatma Demir', email: 'fatma@sirket.com', role: 'editor', online: true, lastLogin: '30 dk önce', emails: 289, color: '#f59e0b' },
-            { name: 'Ahmet Çelik', email: 'ahmet@sirket.com', role: 'viewer', online: false, lastLogin: '3 gün önce', emails: 94, color: '#ef4444' },
-        ];
+        const authToken = localStorage.getItem('auth_token');
+        const authRole = localStorage.getItem('auth_role');
+        const authUser = localStorage.getItem('auth_user');
+
+        if (!authToken || authRole !== 'Admin') {
+            window.location.href = '/static/login.html';
+        }
+
+        const apiFetch = (url, options = {}) => {
+            if (!options.headers) options.headers = {};
+            options.headers['Authorization'] = authToken;
+            options.headers['Content-Type'] = 'application/json';
+            return fetch(url, options);
+        };
+
+        let systemLogs = [];
+
+        async function loadDashboardStats() {
+            try {
+                const res = await apiFetch('/admin/stats');
+                if (!res.ok) throw new Error('Stats API failed');
+                const stats = await res.json();
+                
+                // Update Dashboard Cards
+                document.querySelector('.stat-box.blue .stat-number').textContent = stats.total_emails.toLocaleString();
+                document.querySelector('.stat-box.purple .stat-number').textContent = stats.total_users;
+                document.querySelector('.stat-box.orange .stat-number').textContent = stats.spam_blocked.toLocaleString();
+                document.querySelector('.stat-box.red .stat-number').textContent = stats.error_count;
+                
+                // Update Logs
+                systemLogs = stats.recent_logs || [];
+                document.getElementById('log-badge').textContent = systemLogs.length;
+                renderLogs('all');
+            } catch (e) {
+                console.error(e);
+            }
+        }
 
         function renderLogs(filter = 'all') {
             const list = document.getElementById('log-list');
-            const filtered = filter === 'all' ? logs : logs.filter(l => l.level === filter);
-            list.innerHTML = filtered.map(l => `
+            const filtered = filter === 'all' ? systemLogs : systemLogs.filter(l => {
+                if (filter === 'error') return l.action.toLowerCase().includes('error') || (l.details && l.details.toLowerCase().includes('error'));
+                if (filter === 'success') return l.action.toLowerCase().includes('success') || (l.details && l.details.toLowerCase().includes('success'));
+                return true; // Simplified for demo
+            });
+            
+            if(filtered.length === 0) {
+                list.innerHTML = '<div style="padding:10px; color:var(--text-muted); font-size:12px;">Log bulunamadı</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(l => {
+                const isErr = l.action.toLowerCase().includes('error') || (l.details && l.details.toLowerCase().includes('error'));
+                const level = isErr ? 'error' : 'info';
+                const timeStr = l.created_at.split('.')[0].replace('T', ' ');
+                return `
                 <div class="log-row">
-                    <span class="log-time">${l.time}</span>
-                    <span class="log-level ${l.level}">${l.level}</span>
-                    <span class="log-source">[${l.source}]</span>
-                    <span class="log-msg">${l.msg}</span>
+                    <span class="log-time">${timeStr}</span>
+                    <span class="log-level ${level}">${level}</span>
+                    <span class="log-source">[${l.action}]</span>
+                    <span class="log-msg">${l.details || ''} (Kullanıcı: ${l.user_id || '-'})</span>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function filterLogs(level, btn) {
@@ -342,23 +1038,287 @@
             renderLogs(level);
         }
 
-        function renderUsers() {
-            document.getElementById('user-table-body').innerHTML = users.map(u => `
-                <tr>
-                    <td><div class="user-name-cell">
-                        <div class="user-avatar" style="background:${u.color}">${u.name[0]}</div>
-                        <div><div>${u.name}</div><div class="user-email">${u.email}</div></div>
-                    </div></td>
-                    <td><span class="role-badge ${u.role}">${u.role.charAt(0).toUpperCase() + u.role.slice(1)}</span></td>
-                    <td><span class="status-dot ${u.online ? 'online' : 'offline'}"></span>${u.online ? 'Çevrimiçi' : 'Çevrimdışı'}</td>
-                    <td style="color:var(--text-muted)">${u.lastLogin}</td>
-                    <td><strong>${u.emails}</strong></td>
-                </tr>
-            `).join('');
+        async function loadUsers() {
+            try {
+                const res = await apiFetch('/admin/users');
+                const users = await res.json();
+                const tbody = document.getElementById('user-table-body');
+                tbody.innerHTML = '';
+                
+                if(users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center">Kullanıcı bulunamadı</td></tr>';
+                    return;
+                }
+
+                users.forEach(u => {
+                    const color = u.role === 'Admin' ? '#ef4444' : '#3b82f6';
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <div class="user-name-cell">
+                                <div class="user-avatar" style="background:${color}">${u.username[0].toUpperCase()}</div>
+                                <div>
+                                    <div style="font-weight:600">${u.username}</div>
+                                    <div class="user-email">ID: ${u.id}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <select class="form-select" onchange="updateRole(${u.id}, this.value)">
+                                <option value="Member" ${u.role === 'Member' ? 'selected' : ''}>Member</option>
+                                <option value="Admin" ${u.role === 'Admin' ? 'selected' : ''}>Admin</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="form-btn secondary" onclick="manageAccounts(${u.id}, '${u.username}')">Yetkileri Yönet</button>
+                        </td>
+                        <td>
+                            <button class="form-btn danger" onclick="deleteUser(${u.id}, '${u.username}')">🗑️ Sil</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) {
+                console.error(e);
+            }
         }
 
+        async function updateRole(userId, newRole) {
+            const res = await apiFetch(`/admin/users/${userId}/role`, {
+                method: 'PATCH',
+                body: JSON.stringify({ role: newRole })
+            });
+            if (!res.ok) alert('Rol güncellenemedi');
+        }
+
+        async function deleteUser(userId, username) {
+            if(!confirm(`DİKKAT: ${username} adlı kullanıcıyı tamamen silmek istediğinize emin misiniz? Bu işlem geri alınamaz!`)) return;
+            const res = await apiFetch(`/admin/users/${userId}`, { method: 'DELETE' });
+            if(res.ok) {
+                loadUsers();
+                loadDashboardStats();
+            } else {
+                alert('Kullanıcı silinemedi');
+            }
+        }
+
+        let currentEditingUserId = null;
+
+        async function submitAddUser() {
+            const u = document.getElementById('add-user-username').value.trim();
+            const p = document.getElementById('add-user-password').value;
+            if(!u || !p) return alert('Kullanıcı adı ve şifre zorunludur');
+            try {
+                const res = await fetch('/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+                const data = await res.json();
+                if(res.ok) {
+                    alert('Kullanıcı başarıyla eklendi');
+                    document.getElementById('add-user-modal').style.display='none';
+                    loadUsers();
+                } else {
+                    alert(data.error || 'Kullanıcı eklenemedi');
+                }
+            } catch(e) {
+                alert('Bağlantı hatası');
+            }
+        }
+
+        async function manageAccounts(userId, username) {
+            currentEditingUserId = userId;
+            document.getElementById('modal-title').textContent = `${username} - Mail Kutusu Yetkileri`;
+            document.getElementById('accounts-modal').style.display = 'flex';
+
+            const [allRes, assignedRes] = await Promise.all([
+                apiFetch('/accounts'),
+                apiFetch(`/admin/users/${userId}/accounts`)
+            ]);
+
+            const all = await allRes.json();
+            const assigned = await assignedRes.json();
+
+            const listEl = document.getElementById('modal-accounts');
+            listEl.innerHTML = '';
+
+            all.forEach(acc => {
+                const isAssigned = assigned.includes(acc.id);
+                const chip = document.createElement('div');
+                chip.className = `account-chip ${isAssigned ? 'assigned' : ''}`;
+                chip.innerHTML = `
+                    <span>${acc.email}</span>
+                    <button onclick="toggleAccount('${acc.id}', ${isAssigned})">${isAssigned ? 'Kaldır' : 'Yetki Ver'}</button>
+                `;
+                listEl.appendChild(chip);
+            });
+        }
+
+        async function toggleAccount(accountId, currentlyAssigned) {
+            const method = currentlyAssigned ? 'DELETE' : 'POST';
+            const url = currentlyAssigned
+                ? `/admin/users/${currentEditingUserId}/accounts/${accountId}`
+                : `/admin/users/${currentEditingUserId}/accounts`;
+
+            const res = await apiFetch(url, {
+                method,
+                body: JSON.stringify({ account_id: accountId })
+            });
+
+            if (res.ok) {
+                manageAccounts(currentEditingUserId, document.getElementById('modal-title').textContent.split(' - ')[0]);
+            } else {
+                alert('İşlem başarısız');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('accounts-modal').style.display = 'none';
+        }
+
+        async function loadAccountsTable() {
+            try {
+                const res = await apiFetch('/accounts');
+                const accounts = await res.json();
+                const tbody = document.getElementById('accounts-table-body');
+                tbody.innerHTML = '';
+
+                if(accounts.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center">Hesap bulunamadı</td></tr>';
+                    return;
+                }
+
+                accounts.forEach(a => {
+                    const color = a.color || '#3b82f6';
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <div style="font-weight:600">${a.email}</div>
+                            <div style="font-size:11px; color:var(--text-muted)">ID: ${a.id}</div>
+                        </td>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <div style="width:20px; height:20px; border-radius:4px; background:${color}"></div>
+                                <span style="font-family:monospace; font-size:12px;">${color}</span>
+                            </div>
+                        </td>
+                        <td style="display:flex; gap:8px; align-items:center;">
+                            <button class="form-btn secondary" onclick="openEditAccount('${a.id}', '${a.email}', '${color}', '${a.carddav_url || ''}', '${a.caldav_url || ''}')">Düzenle</button>
+                            <button class="form-btn danger" onclick="deleteAccount('${a.id}', '${a.email}')">🗑️ Sil</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function openEditAccount(id, email, color, carddavUrl, caldavUrl) {
+            document.getElementById('edit-acc-id').value = id;
+            document.getElementById('edit-acc-email').value = email;
+            document.getElementById('edit-acc-color').value = color;
+            document.getElementById('color-hex').textContent = color;
+            document.getElementById('edit-acc-carddav').value = carddavUrl || '';
+            document.getElementById('edit-acc-caldav').value = caldavUrl || '';
+            document.getElementById('edit-account-modal').style.display = 'flex';
+        }
+
+        // Live hex update
+        document.getElementById('edit-acc-color').addEventListener('input', (e) => {
+            document.getElementById('color-hex').textContent = e.target.value;
+        });
+
+        async function saveAccountSettings() {
+            const id = document.getElementById('edit-acc-id').value;
+            const color = document.getElementById('edit-acc-color').value;
+            const carddavUrl = document.getElementById('edit-acc-carddav').value.trim();
+            const caldavUrl = document.getElementById('edit-acc-caldav').value.trim();
+
+            const res = await apiFetch(`/accounts/${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ 
+                    color: color,
+                    carddav_url: carddavUrl || null,
+                    caldav_url: caldavUrl || null
+                })
+            });
+
+            if (res.ok) {
+                closeEditModal();
+                loadAccountsTable();
+            } else {
+                alert('Kaydedilemedi');
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-account-modal').style.display = 'none';
+        }
+
+        async function deleteAccount(id, email) {
+            if(!confirm(`DİKKAT: ${email} hesabını tamamen silmek istediğinize emin misiniz?`)) return;
+            const res = await apiFetch(`/accounts/${id}`, { method: 'DELETE' });
+            if(res.ok) {
+                loadAccountsTable();
+            } else {
+                alert('Hesap silinemedi');
+            }
+        }
+
+        // Sidebar Navigation
+        function showSection(section, btn) {
+            ['dashboard', 'logs', 'users', 'accounts', 'ai'].forEach(s => {
+                const el = document.getElementById('section-' + s);
+                if (el) el.style.display = s === section ? 'block' : 'none';
+            });
+            document.querySelectorAll('.admin-subnav-item').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            else {
+                document.querySelectorAll('.admin-subnav-item').forEach(b => { 
+                    if (b.onclick.toString().includes(section)) b.classList.add('active'); 
+                });
+            }
+
+            document.querySelectorAll('.admin-menu-item').forEach(m => m.classList.remove('active'));
+            document.querySelectorAll('.admin-menu-item').forEach(m => { 
+                if (m.onclick.toString().includes(section)) m.classList.add('active'); 
+            });
+
+            // Mock Data for AI Section as it doesn't have real endpoint yet
+            if (section === 'ai') {
+                renderBarChart('ai-daily-chart', [], ['#3b82f6', '#8b5cf6']);
+            }
+        }
+
+        function refreshLogs() {
+            loadDashboardStats();
+        }
+
+        function exportReport() {
+            const report = `Mailora Admin Raporu
+Tarih: ${new Date().toLocaleString('tr-TR')}
+(Bu özellik yapım aşamasındadır)
+`;
+            const blob = new Blob([report], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `mailora_rapor_${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+            html.dataset.theme = next;
+            document.getElementById('theme-btn').textContent = next === 'dark' ? '🌙' : '☀️';
+        }
+
+        // Mock Rendering functions for dashboard charts (since we don't have real timeseries data yet)
         function renderBarChart(id, data, colors) {
             const chart = document.getElementById(id);
+            if(!chart) return;
             const max = Math.max(...data.map(d => d.value));
             chart.innerHTML = data.map((d, i) => {
                 const h = (d.value / max) * 100;
@@ -371,17 +1331,12 @@
         }
 
         function renderDonut() {
-            const data = [
-                { label: 'İş/Proje', value: 28, color: '#3b82f6' },
-                { label: 'Finans', value: 18, color: '#10b981' },
-                { label: 'Pazarlama', value: 22, color: '#8b5cf6' },
-                { label: 'Kişisel', value: 15, color: '#f59e0b' },
-                { label: 'Diğer', value: 17, color: '#94a3b8' },
-            ];
+            const data = [];
             const total = data.reduce((s, d) => s + d.value, 0);
             let offset = 0;
             const svg = document.getElementById('donut-chart');
             const legend = document.getElementById('donut-legend');
+            if(!svg || !legend) return;
 
             svg.innerHTML = data.map(d => {
                 const pct = (d.value / total) * 100;
@@ -402,61 +1357,21 @@
             `).join('');
         }
 
-        function showSection(section, btn) {
-            ['dashboard', 'logs', 'users', 'ai'].forEach(s => {
-                const el = document.getElementById('section-' + s);
-                if (el) el.style.display = s === section ? 'block' : 'none';
-            });
-            document.querySelectorAll('.admin-subnav-item').forEach(b => b.classList.remove('active'));
-            if (btn) btn.classList.add('active');
-            else document.querySelectorAll('.admin-subnav-item').forEach(b => { if (b.textContent.toLowerCase().includes(section)) b.classList.add('active'); });
-
-            document.querySelectorAll('.admin-menu-item').forEach(m => m.classList.remove('active'));
-            document.querySelectorAll('.admin-menu-item').forEach(m => { if (m.textContent.toLowerCase().includes(section === 'dashboard' ? 'dashboard' : section === 'logs' ? 'log' : section === 'users' ? 'kullanıcı' : 'ai')) m.classList.add('active'); });
-
-            if (section === 'ai') {
-                renderBarChart('ai-daily-chart', [
-                    {label:'1',value:42},{label:'2',value:58},{label:'3',value:35},{label:'4',value:67},{label:'5',value:89},
-                    {label:'6',value:74},{label:'7',value:62},{label:'8',value:91},{label:'9',value:53},{label:'10',value:78},
-                    {label:'11',value:85},{label:'12',value:96},{label:'13',value:72},{label:'14',value:108}
-                ], ['#3b82f6','#8b5cf6']);
-            }
+        // Initialize App
+        async function init() {
+            await loadDashboardStats();
+            await loadUsers();
+            await loadAccountsTable();
+            
+            // Render mock charts
+            renderBarChart('traffic-chart', [], ['#3b82f6', '#3b82f6', '#3b82f6', '#8b5cf6', '#3b82f6', '#64748b', '#64748b']);
+            renderBarChart('ai-perf-chart', [], ['#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#ef4444', '#f59e0b']);
+            renderDonut();
         }
 
-        function refreshLogs() {
-            const newLog = { time: new Date().toLocaleTimeString('tr-TR'), level: 'info', source: 'System', msg: 'Dashboard verisi yenilendi' };
-            logs.unshift(newLog);
-            renderLogs();
-        }
+        init();
 
-        function exportReport() {
-            const report = `Mailora Admin Raporu\n${'='.repeat(40)}\nTarih: ${new Date().toLocaleString('tr-TR')}\n\nToplam E-posta: 1,247\nAI Analiz: 856\nAktif Kullanıcı: 24\nSpam Engellenen: 43\nHata: 3\n\nModel Doğrulukları:\n- Konu: %96.3\n- Spam: %87\n- Duygu: %89\n`;
-            const blob = new Blob([report], { type: 'text/plain' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `mailora_rapor_${new Date().toISOString().split('T')[0]}.txt`;
-            a.click();
-        }
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
-            html.dataset.theme = next;
-            document.getElementById('theme-btn').textContent = next === 'dark' ? '🌙' : '☀️';
-        }
-
-        // Init
-        renderLogs();
-        renderUsers();
-        renderBarChart('traffic-chart', [
-            {label:'Pzt',value:186},{label:'Sal',value:215},{label:'Çar',value:178},{label:'Per',value:245},
-            {label:'Cum',value:198},{label:'Cmt',value:87},{label:'Pzr',value:52}
-        ], ['#3b82f6','#3b82f6','#3b82f6','#8b5cf6','#3b82f6','#64748b','#64748b']);
-        renderBarChart('ai-perf-chart', [
-            {label:'Konu v3',value:96.3},{label:'Spam',value:87},{label:'Duygu',value:89},
-            {label:'Çeviri',value:92},{label:'NER',value:88},{label:'Smart Reply',value:79}
-        ], ['#10b981','#f59e0b','#3b82f6','#8b5cf6','#ef4444','#f59e0b']);
-        renderDonut();
     </script>
 </body>
+
 </html>

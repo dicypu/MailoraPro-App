@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,101 +9,436 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/premium.css">
     <style>
-        .app { grid-template-columns: 260px 1fr; }
-        .sheets-main { grid-row: 2; display: flex; flex-direction: column; overflow: hidden; }
+        .app {
+            grid-template-columns: 260px 1fr;
+        }
 
-        .nav-link { padding: 10px 14px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); transition: var(--transition); margin-bottom: 2px; text-decoration: none; }
-        .nav-link:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
-        .nav-link.active { background: rgba(59,130,246,0.15); color: var(--accent-blue); font-weight: 500; }
+        .sheets-main {
+            grid-row: 2;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .nav-link {
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            margin-bottom: 2px;
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+            font-weight: 500;
+        }
 
         /* Sheets Toolbar */
-        .sheets-toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); flex-wrap: wrap; }
-        .sheets-toolbar-group { display: flex; gap: 4px; padding-right: 8px; border-right: 1px solid var(--border); margin-right: 4px; }
-        .sheets-toolbar-group:last-child { border-right: none; }
-        .st-btn { padding: 6px 10px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-secondary); cursor: pointer; font-size: 12px; font-family: inherit; transition: var(--transition); }
-        .st-btn:hover { border-color: var(--accent-blue); color: var(--text-primary); background: rgba(59,130,246,0.1); }
-        .st-btn.active { background: rgba(59,130,246,0.2); border-color: var(--accent-blue); color: var(--accent-blue); }
-        .st-select { padding: 5px 8px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-family: inherit; font-size: 12px; cursor: pointer; }
+        .sheets-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+            flex-wrap: wrap;
+        }
+
+        .sheets-toolbar-group {
+            display: flex;
+            gap: 4px;
+            padding-right: 8px;
+            border-right: 1px solid var(--border);
+            margin-right: 4px;
+        }
+
+        .sheets-toolbar-group:last-child {
+            border-right: none;
+        }
+
+        .st-btn {
+            padding: 6px 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12px;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .st-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .st-btn.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .st-select {
+            padding: 5px 8px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 12px;
+            cursor: pointer;
+        }
 
         /* Formula Bar */
-        .formula-bar { display: flex; align-items: center; gap: 8px; padding: 6px 16px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); }
-        .cell-ref { padding: 5px 10px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--accent-blue); min-width: 60px; text-align: center; font-family: 'Courier New', monospace; }
-        .formula-icon { color: var(--text-muted); font-size: 14px; font-style: italic; font-weight: 700; }
-        .formula-input { flex: 1; padding: 5px 10px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-family: 'Courier New', monospace; font-size: 12px; transition: var(--transition); }
-        .formula-input:focus { outline: none; border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+        .formula-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+
+        .cell-ref {
+            padding: 5px 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-blue);
+            min-width: 60px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        .formula-icon {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-style: italic;
+            font-weight: 700;
+        }
+
+        .formula-input {
+            flex: 1;
+            padding: 5px 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            transition: var(--transition);
+        }
+
+        .formula-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
 
         /* Spreadsheet Grid */
-        .sheet-container { flex: 1; overflow: auto; position: relative; }
-        .sheet-table { border-collapse: collapse; min-width: 100%; }
-        .sheet-table th { background: var(--bg-tertiary); border: 1px solid var(--border); padding: 6px 4px; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; position: sticky; top: 0; z-index: 2; min-width: 100px; user-select: none; cursor: pointer; }
-        .sheet-table th:first-child { min-width: 40px; width: 40px; position: sticky; left: 0; z-index: 3; }
-        .sheet-table th:hover { background: rgba(59,130,246,0.1); color: var(--text-primary); }
-        .sheet-table td { border: 1px solid var(--border); padding: 0; font-size: 12px; background: var(--bg-secondary); position: relative; }
-        .sheet-table td:first-child { background: var(--bg-tertiary); text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 600; position: sticky; left: 0; z-index: 1; padding: 6px 4px; cursor: pointer; user-select: none; }
-        .sheet-table td:first-child:hover { background: rgba(59,130,246,0.1); }
-        .cell-input { width: 100%; height: 100%; padding: 6px 8px; border: none; background: transparent; color: var(--text-primary); font-family: inherit; font-size: 12px; outline: none; }
-        .cell-input:focus { background: rgba(59,130,246,0.08); box-shadow: inset 0 0 0 2px var(--accent-blue); }
+        .sheet-container {
+            flex: 1;
+            overflow: auto;
+            position: relative;
+        }
+
+        .sheet-table {
+            border-collapse: collapse;
+            min-width: 100%;
+        }
+
+        .sheet-table th {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            padding: 6px 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            min-width: 100px;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .sheet-table th:first-child {
+            min-width: 40px;
+            width: 40px;
+            position: sticky;
+            left: 0;
+            z-index: 3;
+        }
+
+        .sheet-table th:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--text-primary);
+        }
+
+        .sheet-table td {
+            border: 1px solid var(--border);
+            padding: 0;
+            font-size: 12px;
+            background: var(--bg-secondary);
+            position: relative;
+        }
+
+        .sheet-table td:first-child {
+            background: var(--bg-tertiary);
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            position: sticky;
+            left: 0;
+            z-index: 1;
+            padding: 6px 4px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .sheet-table td:first-child:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .cell-input {
+            width: 100%;
+            height: 100%;
+            padding: 6px 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .cell-input:focus {
+            background: rgba(59, 130, 246, 0.08);
+            box-shadow: inset 0 0 0 2px var(--accent-blue);
+        }
 
         /* Sheet Tabs */
-        .sheet-tabs { display: flex; align-items: center; gap: 0; padding: 0 8px; border-top: 1px solid var(--border); background: var(--bg-secondary); height: 36px; }
-        .sheet-tab { padding: 8px 20px; font-size: 12px; font-weight: 500; color: var(--text-secondary); cursor: pointer; border-right: 1px solid var(--border); transition: var(--transition); height: 100%; display: flex; align-items: center; font-family: inherit; background: transparent; border-top: none; border-bottom: none; border-left: none; }
-        .sheet-tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.03); }
-        .sheet-tab.active { color: var(--accent-blue); font-weight: 600; border-bottom: 2px solid var(--accent-blue); background: var(--bg-tertiary); }
-        .sheet-tab-add { padding: 8px 14px; font-size: 16px; color: var(--text-muted); cursor: pointer; background: transparent; border: none; font-family: inherit; transition: var(--transition); }
-        .sheet-tab-add:hover { color: var(--accent-blue); }
+        .sheet-tabs {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            padding: 0 8px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-secondary);
+            height: 36px;
+        }
+
+        .sheet-tab {
+            padding: 8px 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-right: 1px solid var(--border);
+            transition: var(--transition);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            font-family: inherit;
+            background: transparent;
+            border-top: none;
+            border-bottom: none;
+            border-left: none;
+        }
+
+        .sheet-tab:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .sheet-tab.active {
+            color: var(--accent-blue);
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent-blue);
+            background: var(--bg-tertiary);
+        }
+
+        .sheet-tab-add {
+            padding: 8px 14px;
+            font-size: 16px;
+            color: var(--text-muted);
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .sheet-tab-add:hover {
+            color: var(--accent-blue);
+        }
 
         /* Status Bar */
-        .sheet-status { display: flex; align-items: center; gap: 16px; padding: 6px 16px; border-top: 1px solid var(--border); background: var(--bg-tertiary); font-size: 11px; color: var(--text-muted); }
-        .sheet-status-item { display: flex; align-items: center; gap: 4px; }
-        .sheet-status-item strong { color: var(--text-secondary); }
+        .sheet-status {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 6px 16px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-tertiary);
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .sheet-status-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .sheet-status-item strong {
+            color: var(--text-secondary);
+        }
 
         /* Context Menu */
-        .ctx-menu { position: fixed; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 10px; padding: 6px; min-width: 160px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); z-index: 1000; display: none; animation: fadeIn .15s; }
-        .ctx-item { padding: 8px 12px; font-size: 12px; color: var(--text-secondary); cursor: pointer; border-radius: 6px; transition: var(--transition); }
-        .ctx-item:hover { background: rgba(59,130,246,0.1); color: var(--text-primary); }
-        .ctx-sep { height: 1px; background: var(--border); margin: 4px 0; }
+        .ctx-menu {
+            position: fixed;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 6px;
+            min-width: 160px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            display: none;
+            animation: fadeIn .15s;
+        }
+
+        .ctx-item {
+            padding: 8px 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .ctx-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--text-primary);
+        }
+
+        .ctx-sep {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 0;
+        }
 
         /* Sidebar Sheets List */
-        .sheet-file { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; cursor: pointer; transition: var(--transition); margin-bottom: 4px; font-size: 12px; color: var(--text-secondary); }
-        .sheet-file:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
-        .sheet-file.active { background: rgba(59,130,246,0.15); color: var(--accent-blue); }
-        .sheet-file-icon { font-size: 16px; }
-        .sheet-file-date { font-size: 10px; color: var(--text-muted); margin-left: auto; }
+        .sheet-file {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 4px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .sheet-file:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .sheet-file.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .sheet-file-icon {
+            font-size: 16px;
+        }
+
+        .sheet-file-date {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
     </style>
 </head>
+
 <body>
     <div class="app">
         <!-- Header -->
         <header class="header">
             <div class="logo">
-                <div class="logo-icon">✉</div>
+                <img src="/static/logo.png" style="height:28px; width:auto; object-fit:contain; background:transparent; border-radius:6px; margin-right:8px;">
                 <span class="logo-text">Mailora</span>
             </div>
-            <input type="text" class="search-box" placeholder="🔍 Hücre veya veri ara..." id="sheet-search" oninput="searchCells(this.value)">
+            <input type="text" class="search-box" placeholder="🔍 Hücre veya veri ara..." id="sheet-search"
+                oninput="searchCells(this.value)">
             <div class="header-actions">
-                <button class="compose-btn" onclick="addSheet()">📄 Yeni Sayfa</button>
+                <span id="save-indicator" style="font-size:11px; color:var(--text-muted); margin-right:10px;"></span>
+                <button class="icon-btn" onclick="openShareModal()" title="Paylaş">🔗</button>
+                <input type="file" id="csv-upload" accept=".csv" style="display:none" onchange="importCSV(event)">
+                <button class="icon-btn" onclick="document.getElementById('csv-upload').click()" title="CSV İçeri Aktar">📁</button>
                 <button class="icon-btn" onclick="exportCSV()" title="CSV İndir">📥</button>
+                <div style="position:relative;">
+                    <button class="icon-btn" onclick="document.getElementById('app-launcher').classList.toggle('open')" title="Uygulamalar">▦</button>
+                    <!-- Apps Dropdown -->
+                    <div id="app-launcher" class="apps-dropdown">
+                        <a href="/static/index.html" class="app-icon">
+                            <span class="app-icon-img">✉️</span>
+                            <span class="app-icon-label">E-posta</span>
+                        </a>
+                        <a href="/static/calendar.html" class="app-icon">
+                            <span class="app-icon-img">📅</span>
+                            <span class="app-icon-label">Takvim</span>
+                        </a>
+                        <a href="/static/sheets.html" class="app-icon">
+                            <span class="app-icon-img">📊</span>
+                            <span class="app-icon-label">Tablo</span>
+                        </a>
+                        <a href="/static/admin.html" class="app-icon">
+                            <span class="app-icon-img">🛡️</span>
+                            <span class="app-icon-label">Admin</span>
+                        </a>
+                    </div>
+                </div>
                 <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" title="Tema">🌙</button>
             </div>
         </header>
 
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="section-label">Navigasyon</div>
-            <a href="index.html" class="nav-link">📥 Inbox</a>
-            <a href="calendar.html" class="nav-link">📅 Takvim</a>
-            <a href="sheets.html" class="nav-link active">📊 Tablo</a>
-            <a href="admin.html" class="nav-link">🛡️ Admin Panel</a>
 
-            <div class="section-label" style="margin-top:20px">Tablolar</div>
+            <div class="section-label" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
+                <span>Tablolar</span>
+                <button onclick="createNewFile()" style="background:transparent; border:none; color:var(--accent-blue); cursor:pointer; font-size:16px;" title="Yeni Tablo Oluştur">+</button>
+            </div>
             <div id="sheet-files">
-                <div class="sheet-file active"><span class="sheet-file-icon">📊</span> Proje Takip <span class="sheet-file-date">Bugün</span></div>
-                <div class="sheet-file"><span class="sheet-file-icon">📊</span> Bütçe Planı <span class="sheet-file-date">Dün</span></div>
-                <div class="sheet-file"><span class="sheet-file-icon">📊</span> Müşteri Listesi <span class="sheet-file-date">12 Nis</span></div>
+                <!-- User saved sheets list will go here -->
             </div>
 
             <div class="section-label" style="margin-top:20px">Hızlı Formüller</div>
-            <div style="padding:8px;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;font-size:11px;color:var(--text-muted);line-height:1.8">
+            <div
+                style="padding:8px;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;font-size:11px;color:var(--text-muted);line-height:1.8">
                 <code>=SUM(A1:A10)</code><br>
                 <code>=AVG(B1:B5)</code><br>
                 <code>=MAX(C1:C20)</code><br>
@@ -122,7 +458,11 @@
                 </div>
                 <div class="sheets-toolbar-group">
                     <select class="st-select" id="font-size" onchange="changeFontSize(this.value)">
-                        <option>10</option><option selected>12</option><option>14</option><option>16</option><option>18</option>
+                        <option>10</option>
+                        <option selected>12</option>
+                        <option>14</option>
+                        <option>16</option>
+                        <option>18</option>
                     </select>
                 </div>
                 <div class="sheets-toolbar-group">
@@ -133,7 +473,8 @@
                 <div class="sheets-toolbar-group">
                     <button class="st-btn" onclick="insertRow()" title="Satır Ekle">➕ Satır</button>
                     <button class="st-btn" onclick="insertCol()" title="Sütun Ekle">➕ Sütun</button>
-                    <button class="st-btn" onclick="deleteSelected()" title="Sil" style="color:var(--accent-red)">🗑️</button>
+                    <button class="st-btn" onclick="deleteSelected()" title="Sil"
+                        style="color:var(--accent-red)">🗑️</button>
                 </div>
                 <div class="sheets-toolbar-group">
                     <button class="st-btn" onclick="sortColumn('asc')">↑ Sırala</button>
@@ -145,7 +486,8 @@
             <div class="formula-bar">
                 <span class="cell-ref" id="active-cell-ref">A1</span>
                 <span class="formula-icon">fx</span>
-                <input type="text" class="formula-input" id="formula-input" placeholder="Hücre değeri veya formül girin..." onkeydown="if(event.key==='Enter')applyFormula()">
+                <input type="text" class="formula-input" id="formula-input"
+                    placeholder="Hücre değeri veya formül girin..." onkeydown="if(event.key==='Enter')applyFormula()">
             </div>
 
             <!-- Spreadsheet -->
@@ -154,10 +496,7 @@
             </div>
 
             <!-- Sheet Tabs -->
-            <div class="sheet-tabs">
-                <button class="sheet-tab active" onclick="switchSheet(0,this)">📊 Sayfa 1</button>
-                <button class="sheet-tab" onclick="switchSheet(1,this)">📊 Sayfa 2</button>
-                <button class="sheet-tab-add" onclick="addSheet()" title="Yeni Sayfa">+</button>
+            <div class="sheet-tabs" id="sheet-tabs-container">
             </div>
 
             <!-- Status Bar -->
@@ -167,7 +506,8 @@
                 <div class="sheet-status-item">Sayı: <strong id="status-count">0</strong></div>
                 <div class="sheet-status-item">Min: <strong id="status-min">—</strong></div>
                 <div class="sheet-status-item">Max: <strong id="status-max">—</strong></div>
-                <div class="sheet-status-item" style="margin-left:auto">Satır: <strong id="status-rows">50</strong> × Sütun: <strong id="status-cols">20</strong></div>
+                <div class="sheet-status-item" style="margin-left:auto">Satır: <strong id="status-rows">50</strong> ×
+                    Sütun: <strong id="status-cols">20</strong></div>
             </div>
         </div>
     </div>
@@ -191,26 +531,220 @@
         let sheets = [null, null];
         let activeSheet = 0;
 
-        // Demo data
-        const demoData = [
-            ['Proje', 'Durum', 'Sorumlu', 'Başlangıç', 'Bitiş', 'Bütçe (₺)', 'İlerleme'],
-            ['Mailora AI', 'Devam Ediyor', 'Ali', '2026-01-10', '2026-06-30', '150000', '%85'],
-            ['Web Portal', 'Tamamlandı', 'Ayşe', '2025-09-01', '2026-03-15', '95000', '%100'],
-            ['Mobil App', 'Planlanıyor', 'Mehmet', '2026-05-01', '2026-12-31', '200000', '%10'],
-            ['API Gateway', 'Devam Ediyor', 'Fatma', '2026-02-15', '2026-08-01', '80000', '%60'],
-            ['ML Pipeline', 'Test', 'Ahmet', '2026-03-01', '2026-07-15', '120000', '%75'],
-            ['Dashboard v2', 'Review', 'Zeynep', '2026-04-01', '2026-09-30', '65000', '%40'],
-        ];
+        let activeFileId = localStorage.getItem('mailora-active-sheet') || null;
+        let filesList = [];
+        let saveTimeout = null;
 
-        function initData() {
-            data = [];
-            for (let r = 0; r < ROWS; r++) {
-                data[r] = [];
-                for (let c = 0; c < COLS; c++) {
-                    data[r][c] = demoData[r]?.[c] || '';
+        async function initData() {
+            const token = localStorage.getItem('auth_token') || '';
+            if (!token) {
+                alert("Oturum süreniz dolmuş veya giriş yapmamışsınız. Ana sayfaya yönlendiriliyorsunuz.");
+                window.location.href = '/';
+                return;
+            }
+            try {
+                const res = await fetch('/sheets', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (res.status === 401) {
+                    alert("Oturum süreniz dolmuş veya yetkisiz erişim. Ana sayfaya yönlendiriliyorsunuz.");
+                    window.location.href = '/';
+                    return;
                 }
+                const listData = await res.json();
+                
+                if (listData.ok && listData.data && listData.data.length > 0) {
+                    filesList = listData.data;
+                    
+                    if (!activeFileId || !filesList.find(f => f.id === activeFileId)) {
+                        activeFileId = filesList[0].id;
+                    }
+                    await loadFile(activeFileId);
+                } else {
+                    await createNewFile("Tablo 1");
+                }
+            } catch (e) {
+                console.error("Failed to init", e);
+                createEmptyDataView();
             }
         }
+
+        async function loadFile(id) {
+            const token = localStorage.getItem('auth_token') || '';
+            activeFileId = id;
+            localStorage.setItem('mailora-active-sheet', activeFileId);
+            
+            try {
+                const res = await fetch(`/sheets/${id}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const sheetData = await res.json();
+                
+                if (sheetData.ok && sheetData.data) {
+                    const parsed = JSON.parse(sheetData.data.data);
+                    data = parsed.data || createEmptyDataViewArray();
+                    sheets = parsed.sheets || [null, null];
+                    activeSheet = parsed.activeSheet || 0;
+                    
+                    renderSidebarFiles();
+                    renderTabs();
+                    renderTable();
+                    updateStatus();
+                    updateStatus();
+                } else {
+                    createEmptyDataView();
+                    renderTable();
+                }
+            } catch (e) {
+                console.error("Failed to load file", e);
+                createEmptyDataView();
+                renderTable();
+            }
+        }
+
+        function createEmptyDataViewArray() {
+            let empty = [];
+            for (let r = 0; r < ROWS; r++) empty.push(new Array(COLS).fill(''));
+            return empty;
+        }
+
+        function createEmptyDataView() {
+            data = createEmptyDataViewArray();
+            sheets = [null, null];
+            activeSheet = 0;
+        }
+
+        async function createNewFile(name = "Yeni Tablo", initialData = null) {
+            const id = 'file-' + Date.now();
+            const newData = initialData || createEmptyDataViewArray();
+            
+            const payload = {
+                id: id,
+                owner_id: null,
+                name: name,
+                data: JSON.stringify({ data: newData, sheets: [null, null], activeSheet: 0 }),
+                shared_with: "[]"
+            };
+            
+            const token = localStorage.getItem('auth_token') || '';
+            await fetch('/sheets', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            const res = await fetch('/sheets', { headers: { 'Authorization': `Bearer ${token}` } });
+            const listData = await res.json();
+            if (listData.ok) {
+                filesList = listData.data;
+            }
+            
+            await loadFile(id);
+        }
+
+        function renderSidebarFiles() {
+            const container = document.getElementById('sheet-files');
+            container.innerHTML = '';
+            for (const f of filesList) {
+                const div = document.createElement('div');
+                div.className = 'sheet-file' + (f.id === activeFileId ? ' active' : '');
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between';
+                div.style.alignItems = 'center';
+                
+                const icon = f.is_owner ? '📊' : '🔗'; 
+                let inner = `<div style="flex:1;"><span class="sheet-file-icon">${icon}</span> ${f.name}</div>`;
+                if(f.is_owner) {
+                    inner += `<span title="Tabloyu Sil" style="cursor:pointer; font-size:14px; padding:0 5px;" onclick="deleteFile(event, '${f.id}')">🗑️</span>`;
+                }
+                div.innerHTML = inner;
+                div.onclick = () => {
+                    saveToStorageImmediately().then(() => loadFile(f.id));
+                };
+                container.appendChild(div);
+            }
+        }
+
+        async function deleteFile(e, id) {
+            e.stopPropagation();
+            if(!confirm("Bu tabloyu tamamen silmek istediğinize emin misiniz?")) return;
+            const token = localStorage.getItem('auth_token') || '';
+            try {
+                const res = await fetch(`/sheets/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const d = await res.json();
+                if(d.ok) {
+                    filesList = filesList.filter(f => f.id !== id);
+                    if(activeFileId === id) {
+                        if(filesList.length > 0) {
+                            await loadFile(filesList[0].id);
+                        } else {
+                            await createNewFile("Tablo 1");
+                        }
+                    } else {
+                        renderSidebarFiles();
+                    }
+                } else {
+                    alert("Silinemedi: " + d.error);
+                }
+            } catch(err) {
+                console.error(err);
+                alert("Hata oluştu.");
+            }
+        }
+
+        function renderTabs() {
+            const tabs = document.getElementById('sheet-tabs-container');
+            tabs.innerHTML = '';
+            for(let i=0; i<sheets.length; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'sheet-tab' + (i === activeSheet ? ' active' : '');
+                btn.style.display = 'inline-flex';
+                btn.style.alignItems = 'center';
+                btn.style.gap = '8px';
+                
+                const spanName = document.createElement('span');
+                spanName.textContent = `📊 Sayfa ${i + 1}`;
+                spanName.onclick = function() { switchSheet(i, this); };
+                btn.appendChild(spanName);
+                
+                const spanDel = document.createElement('span');
+                spanDel.textContent = '✕';
+                spanDel.style.fontSize = '10px';
+                spanDel.style.cursor = 'pointer';
+                spanDel.style.opacity = '0.5';
+                spanDel.onmouseover = () => spanDel.style.opacity = '1';
+                spanDel.onmouseout = () => spanDel.style.opacity = '0.5';
+                spanDel.onclick = (e) => deleteSheet(e, i);
+                
+                btn.appendChild(spanDel);
+                tabs.appendChild(btn);
+            }
+            const addBtn = document.createElement('button');
+            addBtn.className = 'sheet-tab-add';
+            addBtn.textContent = '+';
+            addBtn.title = 'Yeni Sayfa (Sekme)';
+            addBtn.onclick = addSheet;
+            tabs.appendChild(addBtn);
+        }
+
+        async function deleteSheet(e, index) {
+            e.stopPropagation();
+            if(sheets.length <= 1) {
+                alert("Son sayfayı silemezsiniz!");
+                return;
+            }
+            if(!confirm(`Sayfa ${index+1}'i silmek istediğinize emin misiniz? Tüm içeriği gidecektir.`)) return;
+            
+            sheets.splice(index, 1);
+            if(activeSheet >= index && activeSheet > 0) {
+                activeSheet--;
+            }
+            data = sheets[activeSheet] || createEmptyDataViewArray();
+            renderTabs();
+            renderTable();
+            debouncedSave();
+        }
+
+
 
         function colName(c) {
             let name = '';
@@ -401,39 +935,157 @@
             a.click();
         }
 
-        function addSheet() {
-            const tabs = document.querySelector('.sheet-tabs');
-            const idx = tabs.querySelectorAll('.sheet-tab').length;
-            const btn = document.createElement('button');
-            btn.className = 'sheet-tab';
-            btn.textContent = `📊 Sayfa ${idx + 1}`;
-            btn.onclick = function() { switchSheet(idx, this); };
-            tabs.insertBefore(btn, tabs.querySelector('.sheet-tab-add'));
-            sheets[idx] = null;
-            switchSheet(idx, btn);
+        function importCSV(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(evt) {
+                const text = evt.target.result;
+                const rows = text.split('\n');
+                
+                let newData = createEmptyDataViewArray();
+
+                for (let r = 0; r < rows.length && r < ROWS; r++) {
+                    const cols = rows[r].split(',');
+                    for (let c = 0; c < cols.length && c < COLS; c++) {
+                        newData[r][c] = cols[c].replace(/^"|"$/g, '').trim();
+                    }
+                }
+                
+                await createNewFile(file.name.replace('.csv', ''), newData);
+            };
+            reader.readAsText(file);
+            e.target.value = '';
         }
 
-        function switchSheet(idx, btn) {
-            // Save current sheet data
+        function addSheet() {
+            const idx = sheets.length;
+            sheets.push(null);
+            switchSheet(idx);
+        }
+
+        function switchSheet(idx) {
             sheets[activeSheet] = JSON.parse(JSON.stringify(data));
             activeSheet = idx;
-            // Load target sheet or create fresh
             if (sheets[idx] && sheets[idx].length > 0) {
                 data = JSON.parse(JSON.stringify(sheets[idx]));
             } else {
-                // Empty new sheet
-                data = [];
-                for (let r = 0; r < ROWS; r++) {
-                    data[r] = new Array(COLS).fill('');
-                }
+                data = createEmptyDataViewArray();
             }
-            document.querySelectorAll('.sheet-tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
-            renderTable(); updateStatus();
+            renderTabs();
+            renderTable(); 
+            updateStatus();
+            saveToStorage();
+        }
+
+        async function saveToStorageImmediately() {
+            if (!activeFileId) return;
+            const file = filesList.find(f => f.id === activeFileId);
+            if (!file) return;
+
+            const token = localStorage.getItem('auth_token') || '';
+            const payload = {
+                id: activeFileId,
+                owner_id: null,
+                name: file.name,
+                data: JSON.stringify({ data, sheets, activeSheet }),
+                shared_with: file.shared_with
+            };
+            
+            await fetch('/sheets', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
         }
 
         function saveToStorage() {
-            localStorage.setItem('mailora-sheets', JSON.stringify({ data, sheets: sheets, active: activeSheet }));
+            if(saveTimeout) clearTimeout(saveTimeout);
+            
+            const saveIndicator = document.getElementById('save-indicator');
+            if(saveIndicator) saveIndicator.textContent = 'Kaydediliyor...';
+            
+            saveTimeout = setTimeout(() => {
+                saveToStorageImmediately().then(() => {
+                    if(saveIndicator) saveIndicator.textContent = 'Kaydedildi';
+                    setTimeout(() => { if(saveIndicator) saveIndicator.textContent = ''; }, 2000);
+                }).catch(e => {
+                    console.error("Failed to save sheets", e);
+                    if(saveIndicator) saveIndicator.textContent = 'Kayıt Hatası!';
+                });
+            }, 1000);
+        }
+
+        async function openShareModal() {
+            const file = filesList.find(f => f.id === activeFileId);
+            if (!file) return;
+            if (!file.is_owner) {
+                alert("Sadece tablo sahibi paylaşım ayarlarını değiştirebilir!");
+                return;
+            }
+
+            document.getElementById('share-modal').style.display = 'flex';
+            
+            let shareType = 'NONE';
+            if (file.shared_with === '"ALL"' || file.shared_with === 'ALL') {
+                shareType = 'ALL';
+            } else if (file.shared_with && file.shared_with !== '[]') {
+                shareType = 'SPECIFIC';
+            }
+            
+            const radios = document.getElementsByName('share-type');
+            radios.forEach(r => r.checked = (r.value === shareType));
+            toggleUserList(shareType === 'SPECIFIC');
+
+            const token = localStorage.getItem('auth_token') || '';
+            try {
+                const res = await fetch('/sheets/users', { headers: { 'Authorization': `Bearer ${token}` } });
+                const udata = await res.json();
+                if (udata.ok && udata.data) {
+                    const listDiv = document.getElementById('share-users-list');
+                    listDiv.innerHTML = '';
+                    
+                    let sharedIds = [];
+                    if (shareType === 'SPECIFIC') {
+                        try { sharedIds = JSON.parse(file.shared_with); } catch(e){}
+                    }
+
+                    for (const u of udata.data) {
+                        const isChecked = sharedIds.includes(u.id) ? 'checked' : '';
+                        listDiv.innerHTML += `
+                            <label style="display:block; margin-bottom:6px; cursor:pointer;">
+                                <input type="checkbox" class="share-user-cb" value="${u.id}" ${isChecked}> ${u.username}
+                            </label>
+                        `;
+                    }
+                }
+            } catch(e) {
+                document.getElementById('share-users-list').innerHTML = 'Kullanıcılar yüklenemedi.';
+            }
+        }
+
+        function toggleUserList(show) {
+            document.getElementById('share-users-list').style.display = show ? 'block' : 'none';
+        }
+
+        async function saveShareSettings() {
+            const file = filesList.find(f => f.id === activeFileId);
+            if (!file) return;
+
+            let shared_with = '[]';
+            const type = Array.from(document.getElementsByName('share-type')).find(r => r.checked).value;
+            
+            if (type === 'ALL') {
+                shared_with = '"ALL"';
+            } else if (type === 'SPECIFIC') {
+                const cbs = document.querySelectorAll('.share-user-cb:checked');
+                const ids = Array.from(cbs).map(c => parseInt(c.value));
+                shared_with = JSON.stringify(ids);
+            }
+
+            file.shared_with = shared_with;
+            await saveToStorageImmediately();
+            document.getElementById('share-modal').style.display = 'none';
         }
 
         function toggleTheme() {
@@ -444,9 +1096,41 @@
         }
 
         // Init
-        initData();
-        renderTable();
-        updateStatus();
+        async function runInit() {
+            await initData();
+            renderTable();
+            updateStatus();
+        }
+        runInit();
     </script>
+    <!-- Share Modal -->
+    <div id="share-modal" class="modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center;">
+        <div style="background:var(--bg-primary); padding:20px; border-radius:10px; width:400px; border:1px solid var(--border);">
+            <h3>Tabloyu Paylaş</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Kimlerin bu tabloyu görebileceğini ve düzenleyebileceğini seçin.</p>
+            
+            <div style="margin-bottom:15px;">
+                <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:8px;">
+                    <input type="radio" name="share-type" value="NONE" onclick="toggleUserList(false)"> Sadece Ben (Hiçkimse)
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:8px;">
+                    <input type="radio" name="share-type" value="ALL" onclick="toggleUserList(false)"> Herkes Görebilir
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:8px;">
+                    <input type="radio" name="share-type" value="SPECIFIC" onclick="toggleUserList(true)"> Sadece Şu Kullanıcılar:
+                </label>
+            </div>
+            
+            <div id="share-users-list" style="display:none; max-height:150px; overflow-y:auto; border:1px solid var(--border); padding:10px; border-radius:6px; margin-bottom:15px; font-size:12px;">
+                Yükleniyor...
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button onclick="document.getElementById('share-modal').style.display='none'" style="padding:8px 16px; border:1px solid var(--border); background:var(--bg-secondary); color:var(--text-primary); border-radius:6px; cursor:pointer;">İptal</button>
+                <button onclick="saveShareSettings()" style="padding:8px 16px; background:var(--accent-blue); color:#fff; border:none; border-radius:6px; cursor:pointer;">Kaydet</button>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>

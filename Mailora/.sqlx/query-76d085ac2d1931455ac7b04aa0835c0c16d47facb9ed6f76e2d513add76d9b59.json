@@ -1,0 +1,56 @@
+{
+  "db_name": "SQLite",
+  "query": "\n            SELECT e.id as \"id!\", e.direction as \"direction!\", e.mailbox as \"mailbox!\", \n                   e.actor, e.peer, e.subject, e.ts as \"ts!\"\n            FROM events e\n            JOIN user_accounts ua ON e.mailbox = ua.account_id\n            WHERE ua.user_id = ?\n            ORDER BY e.ts DESC\n            LIMIT 100\n            ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id!",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "direction!",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "mailbox!",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "actor",
+        "ordinal": 3,
+        "type_info": "Text"
+      },
+      {
+        "name": "peer",
+        "ordinal": 4,
+        "type_info": "Text"
+      },
+      {
+        "name": "subject",
+        "ordinal": 5,
+        "type_info": "Text"
+      },
+      {
+        "name": "ts!",
+        "ordinal": 6,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      true,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false
+    ]
+  },
+  "hash": "76d085ac2d1931455ac7b04aa0835c0c16d47facb9ed6f76e2d513add76d9b59"
+}

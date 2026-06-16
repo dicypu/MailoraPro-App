@@ -1,0 +1,15 @@
+services:
+  mailora-hub:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # image: mailora-hub-imap:latest
+    container_name: mailora-hub
+    restart: unless-stopped
+    ports:
+      - "3030:3030"
+    volumes:
+      - ./data:/data
+    environment:
+      - DATABASE_URL=sqlite:///data/mailora_imap.db
+      - RUST_LOG=info,mailora_hub_imap=debug

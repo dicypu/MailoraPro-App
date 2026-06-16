@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,123 +10,637 @@
     <link rel="stylesheet" href="css/premium.css">
     <style>
         /* Calendar Layout Override */
-        .app { grid-template-columns: 260px 1fr; }
-        .calendar-main { grid-row: 2; padding: 24px; overflow-y: auto; }
+        .app {
+            grid-template-columns: 260px 1fr;
+        }
+
+        .calendar-main {
+            grid-row: 2;
+            padding: 24px;
+            overflow-y: auto;
+        }
 
         /* Nav Links */
-        .nav-link { padding: 10px 14px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); transition: var(--transition); margin-bottom: 2px; text-decoration: none; }
-        .nav-link:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
-        .nav-link.active { background: rgba(59,130,246,0.15); color: var(--accent-blue); font-weight: 500; }
+        .nav-link {
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            margin-bottom: 2px;
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+            font-weight: 500;
+        }
 
         /* Calendar Controls */
-        .cal-controls { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-        .cal-title { font-size: 24px; font-weight: 700; min-width: 220px; }
-        .cal-nav-btn { background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 10px; cursor: pointer; font-size: 16px; transition: var(--transition); display: flex; align-items: center; justify-content: center; }
-        .cal-nav-btn:hover { border-color: var(--accent-blue); color: var(--text-primary); background: rgba(59,130,246,0.1); }
-        .cal-today-btn { padding: 8px 16px; background: var(--gradient-primary); color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-family: inherit; font-size: 13px; transition: var(--transition); }
-        .cal-today-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 15px rgba(59,130,246,0.4); }
-        .cal-view-tabs { display: flex; gap: 4px; margin-left: auto; background: var(--bg-tertiary); border-radius: 10px; padding: 3px; border: 1px solid var(--border); }
-        .cal-view-tab { padding: 6px 16px; border-radius: 8px; border: none; background: transparent; color: var(--text-secondary); cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 500; transition: var(--transition); }
-        .cal-view-tab.active { background: var(--gradient-primary); color: #fff; }
-        .cal-view-tab:hover:not(.active) { color: var(--text-primary); }
+        .cal-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .cal-title {
+            font-size: 24px;
+            font-weight: 700;
+            min-width: 220px;
+        }
+
+        .cal-nav-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cal-nav-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .cal-today-btn {
+            padding: 8px 16px;
+            background: var(--gradient-primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            transition: var(--transition);
+        }
+
+        .cal-today-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .cal-view-tabs {
+            display: flex;
+            gap: 4px;
+            margin-left: auto;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            padding: 3px;
+            border: 1px solid var(--border);
+        }
+
+        .cal-view-tab {
+            padding: 6px 16px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .cal-view-tab.active {
+            background: var(--gradient-primary);
+            color: #fff;
+        }
+
+        .cal-view-tab:hover:not(.active) {
+            color: var(--text-primary);
+        }
 
         /* Calendar Grid */
-        .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        .cal-day-header { padding: 12px 8px; text-align: center; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); background: var(--bg-tertiary); border-bottom: 1px solid var(--border); }
-        .cal-cell { min-height: 110px; padding: 8px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg-secondary); cursor: pointer; transition: var(--transition); position: relative; }
-        .cal-cell:nth-child(7n) { border-right: none; }
-        .cal-cell:hover { background: rgba(59,130,246,0.05); }
-        .cal-cell.other-month { opacity: 0.35; }
-        .cal-cell.today { background: rgba(59,130,246,0.08); }
-        .cal-cell.today .cal-date { background: var(--gradient-primary); color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .cal-date { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-secondary); }
-        .cal-event { padding: 3px 6px; border-radius: 5px; font-size: 10px; font-weight: 500; margin-bottom: 3px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: var(--transition); }
-        .cal-event:hover { filter: brightness(1.2); transform: scale(1.02); }
-        .cal-event.blue { background: rgba(59,130,246,0.25); color: #93c5fd; border-left: 3px solid var(--accent-blue); }
-        .cal-event.purple { background: rgba(139,92,246,0.25); color: #c4b5fd; border-left: 3px solid var(--accent-purple); }
-        .cal-event.green { background: rgba(16,185,129,0.25); color: #6ee7b7; border-left: 3px solid var(--accent-green); }
-        .cal-event.red { background: rgba(239,68,68,0.25); color: #fca5a5; border-left: 3px solid var(--accent-red); }
-        .cal-event.orange { background: rgba(245,158,11,0.25); color: #fcd34d; border-left: 3px solid var(--accent-orange); }
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .cal-day-header {
+            padding: 12px 8px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cal-cell {
+            min-height: 110px;
+            padding: 8px;
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .cal-cell:nth-child(7n) {
+            border-right: none;
+        }
+
+        .cal-cell:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .cal-cell.other-month {
+            opacity: 0.35;
+        }
+
+        .cal-cell.today {
+            background: rgba(59, 130, 246, 0.08);
+        }
+
+        .cal-cell.today .cal-date {
+            background: var(--gradient-primary);
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cal-date {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+
+        .cal-event {
+            padding: 3px 6px;
+            border-radius: 5px;
+            font-size: 10px;
+            font-weight: 500;
+            margin-bottom: 3px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: var(--transition);
+        }
+
+        .cal-event:hover {
+            filter: brightness(1.2);
+            transform: scale(1.02);
+        }
+
+        .cal-event.blue {
+            background: rgba(59, 130, 246, 0.25);
+            color: #93c5fd;
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .cal-event.purple {
+            background: rgba(139, 92, 246, 0.25);
+            color: #c4b5fd;
+            border-left: 3px solid var(--accent-purple);
+        }
+
+        .cal-event.green {
+            background: rgba(16, 185, 129, 0.25);
+            color: #6ee7b7;
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .cal-event.red {
+            background: rgba(239, 68, 68, 0.25);
+            color: #fca5a5;
+            border-left: 3px solid var(--accent-red);
+        }
+
+        .cal-event.orange {
+            background: rgba(245, 158, 11, 0.25);
+            color: #fcd34d;
+            border-left: 3px solid var(--accent-orange);
+        }
 
         /* Mini Calendar in Sidebar */
-        .mini-cal { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-top: 16px; }
-        .mini-cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .mini-cal-title { font-size: 12px; font-weight: 600; }
-        .mini-cal-nav { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 12px; }
-        .mini-cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; text-align: center; }
-        .mini-cal-day { font-size: 9px; color: var(--text-muted); padding: 2px; font-weight: 600; }
-        .mini-cal-date { font-size: 10px; padding: 4px; border-radius: 50%; cursor: pointer; color: var(--text-secondary); transition: var(--transition); }
-        .mini-cal-date:hover { background: rgba(59,130,246,0.15); }
-        .mini-cal-date.today { background: var(--accent-blue); color: #fff; font-weight: 700; }
-        .mini-cal-date.other { opacity: 0.3; }
+        .mini-cal {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 16px;
+        }
+
+        .mini-cal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .mini-cal-title {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .mini-cal-nav {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .mini-cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            text-align: center;
+        }
+
+        .mini-cal-day {
+            font-size: 9px;
+            color: var(--text-muted);
+            padding: 2px;
+            font-weight: 600;
+        }
+
+        .mini-cal-date {
+            font-size: 10px;
+            padding: 4px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .mini-cal-date:hover {
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .mini-cal-date.today {
+            background: var(--accent-blue);
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .mini-cal-date.other {
+            opacity: 0.3;
+        }
 
         /* Upcoming events sidebar */
-        .upcoming-list { margin-top: 16px; }
-        .upcoming-item { display: flex; gap: 10px; padding: 10px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: var(--transition); }
-        .upcoming-item:hover { border-color: var(--accent-blue); background: rgba(59,130,246,0.05); }
-        .upcoming-dot { width: 4px; border-radius: 2px; flex-shrink: 0; }
-        .upcoming-info { flex: 1; min-width: 0; }
-        .upcoming-title { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .upcoming-time { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+        .upcoming-list {
+            margin-top: 16px;
+        }
+
+        .upcoming-item {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .upcoming-item:hover {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .upcoming-dot {
+            width: 4px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .upcoming-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .upcoming-title {
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .upcoming-time {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
 
         /* Event Modal */
-        .event-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000; }
-        .event-modal.open { display: flex; }
-        .event-form { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 20px; width: 480px; max-width: 92vw; animation: modalIn .3s ease; }
-        .event-form-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .event-form-header h3 { font-size: 16px; font-weight: 600; }
-        .event-form-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
-        .event-row { display: flex; align-items: center; gap: 12px; }
-        .event-row-icon { font-size: 16px; width: 24px; text-align: center; color: var(--text-muted); }
-        .event-input { flex: 1; padding: 10px 14px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); font-family: inherit; font-size: 13px; transition: var(--transition); }
-        .event-input:focus { outline: none; border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
-        .event-input.title-input { font-size: 18px; font-weight: 600; border: none; background: transparent; padding: 0; }
-        .event-input.title-input:focus { box-shadow: none; border-bottom: 2px solid var(--accent-blue); border-radius: 0; }
-        .event-textarea { flex: 1; padding: 10px 14px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); font-family: inherit; font-size: 13px; resize: vertical; min-height: 60px; transition: var(--transition); }
-        .event-textarea:focus { outline: none; border-color: var(--accent-blue); }
-        .event-select { padding: 10px 14px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); font-family: inherit; font-size: 13px; cursor: pointer; }
-        .color-picker { display: flex; gap: 6px; }
-        .color-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: var(--transition); }
-        .color-dot:hover, .color-dot.selected { border-color: #fff; transform: scale(1.15); }
-        .event-form-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+        .event-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .event-modal.open {
+            display: flex;
+        }
+
+        .event-form {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 480px;
+            max-width: 92vw;
+            animation: modalIn .3s ease;
+        }
+
+        .event-form-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .event-form-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .event-form-body {
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .event-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .event-row-icon {
+            font-size: 16px;
+            width: 24px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .event-input {
+            flex: 1;
+            padding: 10px 14px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 13px;
+            transition: var(--transition);
+        }
+
+        .event-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .event-input.title-input {
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            background: transparent;
+            padding: 0;
+        }
+
+        .event-input.title-input:focus {
+            box-shadow: none;
+            border-bottom: 2px solid var(--accent-blue);
+            border-radius: 0;
+        }
+
+        .event-textarea {
+            flex: 1;
+            padding: 10px 14px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 13px;
+            resize: vertical;
+            min-height: 60px;
+            transition: var(--transition);
+        }
+
+        .event-textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .event-select {
+            padding: 10px 14px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .color-picker {
+            display: flex;
+            gap: 6px;
+        }
+
+        .color-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .color-dot:hover,
+        .color-dot.selected {
+            border-color: #fff;
+            transform: scale(1.15);
+        }
+
+        .event-form-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
 
         /* Week View */
-        .week-view { display: none; }
-        .week-grid { display: grid; grid-template-columns: 60px repeat(7,1fr); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        .week-time { padding: 8px 4px; font-size: 10px; color: var(--text-muted); text-align: right; border-bottom: 1px solid var(--border); height: 48px; background: var(--bg-tertiary); }
-        .week-slot { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); height: 48px; cursor: pointer; transition: var(--transition); position: relative; }
-        .week-slot:hover { background: rgba(59,130,246,0.05); }
-        .week-slot:nth-child(8n) { border-right: none; }
-        .week-day-header { padding: 10px; text-align: center; background: var(--bg-tertiary); border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
-        .week-day-header:last-child { border-right: none; }
-        .week-day-name { font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
-        .week-day-num { font-size: 16px; font-weight: 700; margin-top: 2px; }
-        .week-day-header.today .week-day-num { background: var(--accent-blue); color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 2px auto 0; }
+        .week-view {
+            display: none;
+        }
+
+        .week-grid {
+            display: grid;
+            grid-template-columns: 60px repeat(7, 1fr);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .week-time {
+            padding: 8px 4px;
+            font-size: 10px;
+            color: var(--text-muted);
+            text-align: right;
+            border-bottom: 1px solid var(--border);
+            height: 48px;
+            background: var(--bg-tertiary);
+        }
+
+        .week-slot {
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            height: 48px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .week-slot:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .week-slot:nth-child(8n) {
+            border-right: none;
+        }
+
+        .week-day-header {
+            padding: 10px;
+            text-align: center;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+        }
+
+        .week-day-header:last-child {
+            border-right: none;
+        }
+
+        .week-day-name {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .week-day-num {
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .week-day-header.today .week-day-num {
+            background: var(--accent-blue);
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2px auto 0;
+        }
     </style>
 </head>
+
 <body>
     <div class="app">
         <!-- Header -->
         <header class="header">
             <div class="logo">
-                <div class="logo-icon">✉</div>
+                <img src="/static/logo.png" style="height:28px; width:auto; object-fit:contain; background:transparent; border-radius:6px; margin-right:8px;">
                 <span class="logo-text">Mailora</span>
             </div>
             <div class="header-actions">
+                <button class="compose-btn" onclick="triggerCalDavSync()" style="background:var(--bg-tertiary); border:1px solid var(--border); color:var(--text-primary); margin-right:8px;">🔄 Şimdi Eşitle</button>
                 <button class="compose-btn" onclick="openEventModal()">📅 Yeni Etkinlik</button>
+                <div style="position:relative;">
+                    <button class="icon-btn" onclick="document.getElementById('app-launcher').classList.toggle('open')" title="Uygulamalar">▦</button>
+                    <!-- Apps Dropdown -->
+                    <div id="app-launcher" class="apps-dropdown">
+                        <a href="/static/index.html" class="app-icon">
+                            <span class="app-icon-img">✉️</span>
+                            <span class="app-icon-label">E-posta</span>
+                        </a>
+                        <a href="/static/calendar.html" class="app-icon">
+                            <span class="app-icon-img">📅</span>
+                            <span class="app-icon-label">Takvim</span>
+                        </a>
+                        <a href="/static/sheets.html" class="app-icon">
+                            <span class="app-icon-img">📊</span>
+                            <span class="app-icon-label">Tablo</span>
+                        </a>
+                        <a href="/static/admin.html" class="app-icon">
+                            <span class="app-icon-img">🛡️</span>
+                            <span class="app-icon-label">Admin</span>
+                        </a>
+                    </div>
+                </div>
                 <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" title="Tema">🌙</button>
             </div>
         </header>
 
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="section-label">Navigasyon</div>
-            <a href="index.html" class="nav-link">📥 Inbox</a>
-            <a href="calendar.html" class="nav-link active">📅 Takvim</a>
-            <a href="sheets.html" class="nav-link">📊 Tablo</a>
-            <a href="admin.html" class="nav-link">🛡️ Admin Panel</a>
+            
+            
+            
+            
+            
+            
+            
 
             <div id="mini-calendar"></div>
+
+            <div class="section-label" style="margin-top:20px">Takvimlerim</div>
+            <div class="calendar-list" id="calendar-list" style="margin-top:10px; display:flex; flex-direction:column; gap:6px;">
+                <div style="font-size:12px; color:var(--text-muted); padding:4px 8px;">Yükleniyor...</div>
+            </div>
 
             <div class="section-label" style="margin-top:20px">Yaklaşan Etkinlikler</div>
             <div class="upcoming-list" id="upcoming-list"></div>
@@ -178,6 +693,11 @@
                     </select>
                 </div>
                 <div class="event-row">
+                    <span class="event-row-icon">📅</span>
+                    <select class="event-select" id="calendarSelect">
+                    </select>
+                </div>
+                <div class="event-row">
                     <span class="event-row-icon">📍</span>
                     <input type="text" class="event-input" id="ev-location" placeholder="Konum ekle">
                 </div>
@@ -188,11 +708,16 @@
                 <div class="event-row">
                     <span class="event-row-icon">🎨</span>
                     <div class="color-picker">
-                        <div class="color-dot selected" style="background:var(--accent-blue)" data-color="blue" onclick="pickColor(this)"></div>
-                        <div class="color-dot" style="background:var(--accent-purple)" data-color="purple" onclick="pickColor(this)"></div>
-                        <div class="color-dot" style="background:var(--accent-green)" data-color="green" onclick="pickColor(this)"></div>
-                        <div class="color-dot" style="background:var(--accent-red)" data-color="red" onclick="pickColor(this)"></div>
-                        <div class="color-dot" style="background:var(--accent-orange)" data-color="orange" onclick="pickColor(this)"></div>
+                        <div class="color-dot selected" style="background:var(--accent-blue)" data-color="blue"
+                            onclick="pickColor(this)"></div>
+                        <div class="color-dot" style="background:var(--accent-purple)" data-color="purple"
+                            onclick="pickColor(this)"></div>
+                        <div class="color-dot" style="background:var(--accent-green)" data-color="green"
+                            onclick="pickColor(this)"></div>
+                        <div class="color-dot" style="background:var(--accent-red)" data-color="red"
+                            onclick="pickColor(this)"></div>
+                        <div class="color-dot" style="background:var(--accent-orange)" data-color="orange"
+                            onclick="pickColor(this)"></div>
                     </div>
                 </div>
             </div>
@@ -208,27 +733,113 @@
         let currentDate = new Date();
         let currentView = 'month';
         let selectedColor = 'blue';
+        let accounts = [];
+        let calendars = [];
         let events = [];
-        try { events = JSON.parse(localStorage.getItem('mailora-events') || '[]'); } catch(e) { events = []; }
 
-        // Demo events
-        if (events.length === 0) {
-            const today = new Date();
-            const y = today.getFullYear(), m = today.getMonth();
-            events = [
-                { id: 1, title: 'Sprint Planlama', date: `${y}-${String(m+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`, start: '10:00', end: '11:30', color: 'blue', location: 'Zoom', desc: 'Q2 sprint planlama toplantısı' },
-                { id: 2, title: 'Tasarım Review', date: `${y}-${String(m+1).padStart(2,'0')}-${String(today.getDate()+2).padStart(2,'0')}`, start: '14:00', end: '15:00', color: 'purple', location: 'Ofis', desc: '' },
-                { id: 3, title: 'Doktor Randevusu', date: `${y}-${String(m+1).padStart(2,'0')}-${String(today.getDate()+5).padStart(2,'0')}`, start: '09:00', end: '10:00', color: 'red', location: 'Hastane', desc: '' },
-                { id: 4, title: 'Müşteri Demo', date: `${y}-${String(m+1).padStart(2,'0')}-${String(today.getDate()+1).padStart(2,'0')}`, start: '16:00', end: '17:00', color: 'green', location: 'Google Meet', desc: 'Yeni dashboard demosu' },
-                { id: 5, title: 'Doğum Günü Partisi 🎂', date: `${y}-${String(m+1).padStart(2,'0')}-${String(Math.min(today.getDate()+7,28)).padStart(2,'0')}`, start: '19:00', end: '23:00', color: 'orange', location: 'Ev', desc: '' },
-                { id: 6, title: 'AI Model Eğitimi', date: `${y}-${String(m+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`, start: '14:00', end: '16:00', color: 'purple', location: 'MailoraPro Lab', desc: 'Konu modeli v4 eğitimi' },
-            ];
-            localStorage.setItem('mailora-events', JSON.stringify(events));
+        // Authentication Setup
+        const authToken = localStorage.getItem('auth_token');
+        const fetchOpts = authToken ? { headers: { 'Authorization': authToken, 'Content-Type': 'application/json' } } : { headers: { 'Content-Type': 'application/json' } };
+
+        async function loadData() {
+            try {
+                // Fetch accounts
+                const accRes = await fetch('/accounts', fetchOpts);
+                if (!accRes.ok) throw new Error('Accounts fetch failed or unauthorized');
+                const accData = await accRes.json();
+                if (Array.isArray(accData)) {
+                    accounts = accData;
+                } else if (accData && accData.success && Array.isArray(accData.data)) {
+                    accounts = accData.data;
+                } else {
+                    render();
+                    return;
+                }
+
+                // Fetch calendars
+                calendars = [];
+                for (const acc of accounts) {
+                    try {
+                        const calRes = await fetch(`/calendar/accounts/${acc.id}/calendars`, fetchOpts);
+                        if (!calRes.ok) continue;
+                        const calData = await calRes.json();
+                        if (calData.success) {
+                            calendars.push(...calData.data.map(c => ({ ...c, accountId: acc.id, accountEmail: acc.email })));
+                        }
+                    } catch (e) { }
+                }
+
+                // Populate calendar select
+                const sel = document.getElementById('calendarSelect');
+                if (sel) {
+                    sel.innerHTML = calendars.map(c => `<option value="${c.id}" data-acc="${c.accountId}">${c.display_name} (${c.accountEmail})</option>`).join('');
+                }
+
+                // Populate calendar list in sidebar
+                const listEl = document.getElementById('calendar-list');
+                if (listEl) {
+                    if (calendars.length === 0) {
+                        listEl.innerHTML = `<div style="font-size:12px; color:var(--text-muted); padding:4px 8px;">Takvim bulunamadı.</div>`;
+                    } else {
+                        listEl.innerHTML = calendars.map(c => {
+                            const color = c.color || '#3b82f6';
+                            return `
+                                <div style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-secondary); padding:4px 8px; border-radius:6px; background:rgba(255,255,255,0.02)">
+                                    <div style="width:10px; height:10px; border-radius:50%; background:${color}; flex-shrink:0;"></div>
+                                    <span style="text-overflow:ellipsis; overflow:hidden; white-space:nowrap; flex:1;" title="${c.display_name} (${c.accountEmail})">
+                                        <strong>${c.display_name}</strong> <span style="font-size:10px; color:var(--text-muted)">(${c.accountEmail.split('@')[0]})</span>
+                                    </span>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+                }
+
+                // Fetch events
+                events = [];
+                for (const cal of calendars) {
+                    try {
+                        const evRes = await fetch(`/calendar/accounts/${cal.accountId}/calendars/${cal.id}/events`, fetchOpts);
+                        if (!evRes.ok) continue;
+                        const evData = await evRes.json();
+                        if (evData.success) {
+                            for (const backendEv of evData.data) {
+                                let dateStr = "", startTime = "", endTime = "";
+                                if (backendEv.dtstart) {
+                                    const d = new Date(backendEv.dtstart);
+                                    dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                                    startTime = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+                                }
+                                if (backendEv.dtend) {
+                                    const d2 = new Date(backendEv.dtend);
+                                    endTime = `${String(d2.getHours()).padStart(2, '0')}:${String(d2.getMinutes()).padStart(2, '0')}`;
+                                }
+
+                                events.push({
+                                    id: backendEv.id,
+                                    title: backendEv.summary || 'Yeni Etkinlik',
+                                    date: dateStr,
+                                    start: startTime,
+                                    end: endTime,
+                                    color: cal.color && cal.color.startsWith('#') ? 'blue' : (cal.color || 'blue'),
+                                    location: backendEv.location,
+                                    desc: backendEv.description,
+                                });
+                            }
+                        }
+                    } catch (e) { }
+                }
+
+                render();
+            } catch (err) {
+                console.error("Error loading calendar data", err);
+                render();
+            }
         }
 
-        const months = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-        const daysShort = ['Pzr','Pzt','Sal','Çar','Per','Cum','Cmt'];
-        const daysFull = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+        const months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+        const daysShort = ['Pzr', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+        const daysFull = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
 
         function render() {
             renderTitle();
@@ -258,14 +869,14 @@
 
             // Current month
             for (let d = 1; d <= daysInMonth; d++) {
-                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
                 const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
                 const dayEvents = events.filter(e => e.date === dateStr);
                 const evHtml = dayEvents.map(e => {
-                    const safeTitle = (e.title||'').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                    return `<div class="cal-event ${e.color}" title="${safeTitle} (${e.start||''}-${e.end||''})" data-eid="${e.id}">${e.start ? e.start+' ' : ''}${e.title}</div>`;
+                    const safeTitle = (e.title || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    return `<div class="cal-event ${e.color}" title="${safeTitle} (${e.start || ''}-${e.end || ''})" data-eid="${e.id}">${e.start ? e.start + ' ' : ''}${e.title}</div>`;
                 }).join('');
-                html += `<div class="cal-cell ${isToday?'today':''}" data-date="${dateStr}"><div class="cal-date">${d}</div>${evHtml}</div>`;
+                html += `<div class="cal-cell ${isToday ? 'today' : ''}" data-date="${dateStr}"><div class="cal-date">${d}</div>${evHtml}</div>`;
             }
 
             // Next month fill
@@ -279,12 +890,12 @@
 
             // Bind click events after render
             grid.querySelectorAll('.cal-cell:not(.other-month)').forEach(cell => {
-                cell.addEventListener('click', function(e) {
+                cell.addEventListener('click', function (e) {
                     if (e.target.closest('.cal-event')) {
                         // Clicked on an event - show its details
                         const eid = parseInt(e.target.closest('.cal-event').dataset.eid);
                         const ev = events.find(x => x.id === eid);
-                        if (ev) alert(`${ev.title}\n${ev.start||''} - ${ev.end||''}\n📍 ${ev.location||'—'}\n${ev.desc||''}`);
+                        if (ev) alert(`${ev.title}\n${ev.start || ''} - ${ev.end || ''}\n📍 ${ev.location || '—'}\n${ev.desc || ''}`);
                     } else {
                         // Clicked on empty area - create new event
                         openEventModal(cell.dataset.date);
@@ -315,7 +926,7 @@
             }
             for (let d = 1; d <= daysInMonth; d++) {
                 const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
-                html += `<div class="mini-cal-date ${isToday?'today':''}">${d}</div>`;
+                html += `<div class="mini-cal-date ${isToday ? 'today' : ''}">${d}</div>`;
             }
             html += `</div></div>`;
             mc.innerHTML = html;
@@ -324,14 +935,14 @@
         function renderUpcoming() {
             const list = document.getElementById('upcoming-list');
             const today = new Date().toISOString().split('T')[0];
-            const upcoming = events.filter(e => e.date >= today).sort((a,b) => a.date.localeCompare(b.date) || (a.start||'').localeCompare(b.start||'')).slice(0,5);
+            const upcoming = events.filter(e => e.date >= today).sort((a, b) => a.date.localeCompare(b.date) || (a.start || '').localeCompare(b.start || '')).slice(0, 5);
             list.innerHTML = upcoming.map(e => {
                 const d = new Date(e.date);
                 return `<div class="upcoming-item">
                     <div class="upcoming-dot" style="background:var(--accent-${e.color})"></div>
                     <div class="upcoming-info">
                         <div class="upcoming-title">${e.title}</div>
-                        <div class="upcoming-time">${d.getDate()} ${months[d.getMonth()]} • ${e.start||''} ${e.location ? '📍'+e.location : ''}</div>
+                        <div class="upcoming-time">${d.getDate()} ${months[d.getMonth()]} • ${e.start || ''} ${e.location ? '📍' + e.location : ''}</div>
                     </div>
                 </div>`;
             }).join('') || '<div style="font-size:12px;color:var(--text-muted);padding:8px">Yaklaşan etkinlik yok</div>';
@@ -358,10 +969,10 @@
             for (let i = 0; i < 7; i++) {
                 const d = new Date(startOfWeek); d.setDate(startOfWeek.getDate() + i);
                 const isToday = d.toDateString() === today.toDateString();
-                html += `<div class="week-day-header ${isToday?'today':''}"><div class="week-day-name">${daysShort[i]}</div><div class="week-day-num">${d.getDate()}</div></div>`;
+                html += `<div class="week-day-header ${isToday ? 'today' : ''}"><div class="week-day-name">${daysShort[i]}</div><div class="week-day-num">${d.getDate()}</div></div>`;
             }
             for (let h = 8; h <= 20; h++) {
-                html += `<div class="week-time">${String(h).padStart(2,'0')}:00</div>`;
+                html += `<div class="week-time">${String(h).padStart(2, '0')}:00</div>`;
                 for (let i = 0; i < 7; i++) {
                     const d = new Date(startOfWeek); d.setDate(startOfWeek.getDate() + i);
                     const dateStr = d.toISOString().split('T')[0];
@@ -382,7 +993,7 @@
 
         function closeEventModal() {
             document.getElementById('event-modal').classList.remove('open');
-            ['ev-title','ev-date','ev-start','ev-end','ev-location','ev-desc'].forEach(id => document.getElementById(id).value = '');
+            ['ev-title', 'ev-date', 'ev-start', 'ev-end', 'ev-location', 'ev-desc'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('ev-repeat').value = 'none';
         }
 
@@ -392,22 +1003,92 @@
             selectedColor = el.dataset.color;
         }
 
-        function saveEvent() {
+        async function saveEvent() {
             const title = document.getElementById('ev-title').value.trim();
             if (!title) { alert('Lütfen etkinlik adı girin'); return; }
-            events.push({
-                id: Date.now(),
-                title,
-                date: document.getElementById('ev-date').value,
-                start: document.getElementById('ev-start').value,
-                end: document.getElementById('ev-end').value,
+
+            const sel = document.getElementById('calendarSelect');
+            if (!sel || sel.selectedIndex < 0) { alert('Lütfen bir takvim seçin. (Ayarlardan CalDAV ekleyin)'); return; }
+            const opt = sel.options[sel.selectedIndex];
+            const accountId = opt.dataset.acc;
+            const calendarId = sel.value;
+
+            // Generate RFC-compliant RRULE
+            const repeatVal = document.getElementById('ev-repeat').value;
+            let rrule = null;
+            if (repeatVal !== 'none') {
+                rrule = `FREQ=${repeatVal.toUpperCase()}`;
+            }
+
+            const startDateInput = document.getElementById('ev-date').value;
+            const startTimeInput = document.getElementById('ev-start').value || "09:00";
+            const endDateInput = document.getElementById('ev-date').value; // Same day for simplicity in the mockup
+            const endTimeInput = document.getElementById('ev-end').value || "10:00";
+
+            const payload = {
+                summary: title,
+                description: document.getElementById('ev-desc').value,
                 location: document.getElementById('ev-location').value,
-                desc: document.getElementById('ev-desc').value,
-                color: selectedColor
-            });
-            localStorage.setItem('mailora-events', JSON.stringify(events));
-            closeEventModal();
-            render();
+                dtstart: new Date(`${startDateInput}T${startTimeInput}:00`).toISOString(),
+                dtend: new Date(`${endDateInput}T${endTimeInput}:00`).toISOString(),
+                is_all_day: false,
+                timezone: 'UTC',
+                rrule: rrule
+            };
+
+            try {
+                const res = await fetch(`/calendar/accounts/${accountId}/calendars/${calendarId}/events`, {
+                    method: 'POST',
+                    headers: fetchOpts.headers,
+                    body: JSON.stringify(payload)
+                });
+                if (!res.ok) {
+                    if (res.status === 401) alert('Oturum süresi dolmuş veya yetkisiz işlem.');
+                    else alert('API Hatası: HTTP ' + res.status);
+                    return;
+                }
+                const data = await res.json();
+                if (data.success) {
+                    closeEventModal();
+                    await loadData(); // reload
+                    // Automatically trigger sync to push the new event immediately in background
+                    fetch(`/calendar/accounts/${accountId}/caldav/sync`, {
+                        method: 'POST',
+                        headers: fetchOpts.headers
+                    }).catch(() => {});
+                } else {
+                    alert('Hata: ' + data.error);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function triggerCalDavSync() {
+            const btn = document.querySelector('.header-actions button[onclick="triggerCalDavSync()"]');
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = '🔄 Eşitleniyor...';
+            }
+            try {
+                let syncCount = 0;
+                for (const acc of accounts) {
+                    const res = await fetch(`/calendar/accounts/${acc.id}/caldav/sync`, {
+                        method: 'POST',
+                        headers: fetchOpts.headers
+                    });
+                    if (res.ok) syncCount++;
+                }
+                // Wait 1.5 seconds for background sync to start/do some work
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                await loadData();
+                alert('Takvim eşzamanlama işlemi arka planda başlatıldı.');
+            } catch (e) {
+                console.error("Sync error:", e);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = '🔄 Şimdi Eşitle';
+                }
+            }
         }
 
         function toggleTheme() {
@@ -418,7 +1099,8 @@
         }
 
         // Init
-        render();
+        loadData();
     </script>
 </body>
+
 </html>

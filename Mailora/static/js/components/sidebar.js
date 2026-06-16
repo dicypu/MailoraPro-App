@@ -13,10 +13,15 @@ function renderAccounts() {
     const s = store.getState();
     const c = el('account-list');
     if (!c) return;
-    c.innerHTML = s.accounts.map(a => `
-        <div class="account-item ${s.selectedAccountId===a.id?'active':''}" data-id="${a.id}">
+    c.innerHTML = `
+        <div class="account-item ${s.selectedAccountId === 'unified' ? 'active' : ''}" data-id="unified" style="border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px;">
+            <div class="account-dot" style="background:var(--text-muted)"></div>
+            <span class="account-name" style="font-weight:600">Tüm Hesaplar</span>
+        </div>
+    ` + s.accounts.map(a => `
+        <div class="account-item ${s.selectedAccountId === a.id ? 'active' : ''}" data-id="${a.id}">
             <div class="account-dot" style="background:${a.color}"></div>
-            <span class="account-name">${a.displayName||a.email}</span>
+            <span class="account-name">${a.displayName || a.email}</span>
         </div>
     `).join('');
     c.querySelectorAll('.account-item').forEach(el => {
@@ -27,10 +32,10 @@ function renderFolders() {
     const s = store.getState();
     const c = el('folder-list');
     if (!c) return;
-    const icons = { Inbox:'📥', Sent:'📤', Drafts:'📝', Spam:'⚠️', Trash:'🗑️' };
+    const icons = { Inbox: '📥', Sent: '📤', Drafts: '📝', Spam: '⚠️', Trash: '🗑️', Outbox: '⏳' };
     c.innerHTML = s.folders.map(f => `
-        <div class="folder-item ${s.selectedFolder===f?'active':''}" data-folder="${f}">
-            <span>${icons[f]||'📁'}</span><span>${f}</span>
+        <div class="folder-item ${s.selectedFolder === f ? 'active' : ''}" data-folder="${f}">
+            <span>${icons[f] || '📁'}</span><span>${f}</span>
         </div>
     `).join('');
     c.querySelectorAll('.folder-item').forEach(el => {

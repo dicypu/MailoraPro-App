@@ -1,0 +1,4 @@
+-- Legacy migration replaced to match current schema. No action required here because messages table already created by 20241018000000_create_messages.sql.
+-- Keeping file to preserve migration order.
+-- Previously attempted to create different columns (internaldate, to_addrs) which don't exist in current DB.
+-- You can safely leave this migration empty.

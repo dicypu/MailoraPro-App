@@ -1,0 +1,4 @@
+-- Placeholder indexes removed due to missing columns in simplified schema
+-- CREATE INDEX IF NOT EXISTS idx_msg_acc_fold_uid ON messages(account_id, folder_id, uid);
+-- CREATE INDEX IF NOT EXISTS idx_msg_unified ON messages(unified_key);
+-- CREATE INDEX IF NOT EXISTS idx_msg_date ON messages(folder_id, date_epoch DESC);

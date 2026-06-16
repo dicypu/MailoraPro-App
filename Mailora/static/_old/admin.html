@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mailora Hub - Admin Paneli</title>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #94a3b8;
+        }
+
+        .card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #334155;
+        }
+
+        th {
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .badge-admin {
+            background: #059669;
+            color: #ecfdf5;
+        }
+
+        .badge-member {
+            background: #475569;
+            color: #f1f5f9;
+        }
+
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        button.secondary {
+            background: #475569;
+        }
+
+        button.danger {
+            background: #ef4444;
+        }
+
+        select {
+            background: #0f172a;
+            color: white;
+            border: 1px solid #334155;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .account-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .account-chip {
+            background: #334155;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .account-chip.assigned {
+            background: #1d4ed8;
+        }
+
+        .account-chip button {
+            padding: 2px 6px;
+            font-size: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            width: 500px;
+            max-width: 90%;
+        }
+
+        .back-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <a href="/static/app.html" class="back-link">← Geri Dön</a>
+                <h1>Admin Paneli</h1>
+            </div>
+            <div id="admin-user" class="small">Yükleniyor...</div>
+        </header>
+
+        <div class="card">
+            <h2>Kullanıcı Yönetimi</h2>
+            <table id="users-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Kullanıcı Adı</th>
+                        <th>Rol</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="4" style="text-align:center">Yükleniyor...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>Hesap Yönetimi</h2>
+            <table id="accounts-table">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Renk</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3" style="text-align:center">Yükleniyor...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="edit-account-modal" class="modal">
+            <div class="modal-content">
+                <h3>Hesap Düzenle</h3>
+                <input type="hidden" id="edit-acc-id">
+                <div style="margin-bottom:12px">
+                    <label style="display:block; margin-bottom:4px; font-size:12px; color:#94a3b8;">Email</label>
+                    <input id="edit-acc-email" disabled
+                        style="width:100%; padding:8px; background:#334155; border:none; color:#ccc; border-radius:6px;">
+                </div>
+                <div style="margin-bottom:12px">
+                    <label style="display:block; margin-bottom:4px; font-size:12px; color:#94a3b8;">Renk</label>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <input type="color" id="edit-acc-color"
+                            style="height:40px; width:60px; border:none; padding:0; background:none;">
+                        <span id="color-hex" style="font-family:monospace; color:#ccc"></span>
+                    </div>
+                </div>
+                <div style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px;">
+                    <button class="secondary" onclick="closeEditModal()">İptal</button>
+                    <button onclick="saveAccountColor()">Kaydet</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Hesap Yönetimi</h2>
+            <table id="accounts-table">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Renk</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3" style="text-align:center">Yükleniyor...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="edit-account-modal" class="modal">
+            <div class="modal-content">
+                <h3>Hesap Düzenle</h3>
+                <input type="hidden" id="edit-acc-id">
+                <div style="margin-bottom:12px">
+                    <label style="display:block; margin-bottom:4px; font-size:12px; color:#94a3b8;">Email</label>
+                    <input id="edit-acc-email" disabled
+                        style="width:100%; padding:8px; background:#334155; border:none; color:#ccc; border-radius:6px;">
+                </div>
+                <div style="margin-bottom:12px">
+                    <label style="display:block; margin-bottom:4px; font-size:12px; color:#94a3b8;">Renk</label>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <input type="color" id="edit-acc-color"
+                            style="height:40px; width:60px; border:none; padding:0; background:none;">
+                        <span id="color-hex" style="font-family:monospace; color:#ccc"></span>
+                    </div>
+                </div>
+                <div style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px;">
+                    <button class="secondary" onclick="closeEditModal()">İptal</button>
+                    <button onclick="saveAccountColor()">Kaydet</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="accounts-modal" class="modal">
+            <div class="modal-content">
+                <h3 id="modal-title">Mail Kutusu Yetkileri</h3>
+                <div id="modal-accounts" class="account-list"></div>
+                <div style="margin-top:20px; display:flex; justify-content:flex-end;">
+                    <button onclick="closeModal()">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const authToken = localStorage.getItem('auth_token');
+        const authRole = localStorage.getItem('auth_role');
+        const authUser = localStorage.getItem('auth_user');
+
+        if (!authToken || authRole !== 'Admin') {
+            window.location.href = '/static/app.html';
+        }
+
+        document.getElementById('admin-user').textContent = `Admin: ${authUser}`;
+
+        const apiFetch = (url, options = {}) => {
+            if (!options.headers) options.headers = {};
+            options.headers['Authorization'] = authToken;
+            options.headers['Content-Type'] = 'application/json';
+            return fetch(url, options);
+        };
+
+        async function loadUsers() {
+            const res = await apiFetch('/admin/users');
+            const users = await res.json();
+            const tbody = document.querySelector('#users-table tbody');
+            tbody.innerHTML = '';
+
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${u.id}</td>
+                    <td>${u.username}</td>
+                    <td>
+                        <select onchange="updateRole(${u.id}, this.value)">
+                            <option value="Member" ${u.role === 'Member' ? 'selected' : ''}>Member</option>
+                            <option value="Admin" ${u.role === 'Admin' ? 'selected' : ''}>Admin</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button onclick="manageAccounts(${u.id}, '${u.username}')">Yetkileri Yönet</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function updateRole(userId, newRole) {
+            const res = await apiFetch(`/admin/users/${userId}/role`, {
+                method: 'PATCH',
+                body: JSON.stringify({ role: newRole })
+            });
+            if (!res.ok) alert('Rol güncellenemedi');
+        }
+
+        let currentEditingUserId = null;
+
+        async function manageAccounts(userId, username) {
+            currentEditingUserId = userId;
+            document.getElementById('modal-title').textContent = `${username} - Mail Kutusu Yetkileri`;
+            document.getElementById('accounts-modal').style.display = 'flex';
+
+            // Load all accounts and user's assigned accounts
+            const [allRes, assignedRes] = await Promise.all([
+                apiFetch('/accounts'),
+                apiFetch(`/admin/users/${userId}/accounts`)
+            ]);
+
+            const all = await allRes.json();
+            const assigned = await assignedRes.json();
+
+            const listEl = document.getElementById('modal-accounts');
+            listEl.innerHTML = '';
+
+            all.forEach(acc => {
+                const isAssigned = assigned.includes(acc.id);
+                const chip = document.createElement('div');
+                chip.className = `account-chip ${isAssigned ? 'assigned' : ''}`;
+                chip.innerHTML = `
+                    <span>${acc.email}</span>
+                    <button onclick="toggleAccount('${acc.id}', ${isAssigned})">${isAssigned ? 'Kaldır' : 'Yetki Ver'}</button>
+                `;
+                listEl.appendChild(chip);
+            });
+        }
+
+        async function toggleAccount(accountId, currentlyAssigned) {
+            const method = currentlyAssigned ? 'DELETE' : 'POST';
+            const url = currentlyAssigned
+                ? `/admin/users/${currentEditingUserId}/accounts/${accountId}`
+                : `/admin/users/${currentEditingUserId}/accounts`;
+
+            const res = await apiFetch(url, {
+                method,
+                body: JSON.stringify({ account_id: accountId })
+            });
+
+            if (res.ok) {
+                manageAccounts(currentEditingUserId, document.getElementById('modal-title').textContent.split(' - ')[0]);
+            } else {
+                alert('İşlem başarısız');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('accounts-modal').style.display = 'none';
+        }
+
+
+        function closeEditModal() {
+            document.getElementById('edit-account-modal').style.display = 'none';
+        }
+
+        async function loadAccountsTable() {
+            const res = await apiFetch('/accounts');
+            const accounts = await res.json();
+            const tbody = document.querySelector('#accounts-table tbody');
+            tbody.innerHTML = '';
+
+            accounts.forEach(a => {
+                const tr = document.createElement('tr');
+                const color = a.color || '#3b82f6';
+                tr.innerHTML = `
+                    <td>${a.email}</td>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <div style="width:20px; height:20px; border-radius:4px; background:${color}"></div>
+                            <span style="font-family:monospace; font-size:12px;">${color}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <button onclick="openEditAccount('${a.id}', '${a.email}', '${color}')">Düzenle</button>
+                    </td>
+                 `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openEditAccount(id, email, color) {
+            document.getElementById('edit-acc-id').value = id;
+            document.getElementById('edit-acc-email').value = email;
+            document.getElementById('edit-acc-color').value = color;
+            document.getElementById('color-hex').textContent = color;
+            document.getElementById('edit-account-modal').style.display = 'flex';
+        }
+
+        // Live hex update
+        document.getElementById('edit-acc-color').addEventListener('input', (e) => {
+            document.getElementById('color-hex').textContent = e.target.value;
+        });
+
+        async function saveAccountColor() {
+            const id = document.getElementById('edit-acc-id').value;
+            const color = document.getElementById('edit-acc-color').value;
+
+            const res = await apiFetch(`/accounts/${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ color: color })
+            });
+
+            if (res.ok) {
+                closeEditModal();
+                loadAccountsTable();
+            } else {
+                alert('Kaydedilemedi');
+            }
+        }
+
+        loadUsers();
+        loadAccountsTable();
+    </script>
+</body>
+
+</html>

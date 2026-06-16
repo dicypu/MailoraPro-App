@@ -11,7 +11,23 @@ function render(open) {
     const modal = el('compose-modal');
     if (!modal) return;
     modal.style.display = open ? 'flex' : 'none';
-    if (open) { el('compose-to')?.focus(); initDropzone(); }
+    if (open) { 
+        el('compose-to')?.focus(); 
+        initDropzone(); 
+        const s = store.getState();
+        const fromSelect = el('compose-from');
+        if (fromSelect && s.accounts) {
+            if (s.accounts.length === 0) {
+                fromSelect.innerHTML = '<option value="">(Tanımlı hesap yok)</option>';
+                fromSelect.disabled = true;
+            } else {
+                fromSelect.innerHTML = s.accounts.map(a => 
+                    `<option value="${a.id}" ${a.id === s.selectedAccountId ? 'selected' : ''}>Kimden: ${a.email}</option>`
+                ).join('');
+                fromSelect.disabled = false;
+            }
+        }
+    }
 }
 function initDropzone() {
     const dz = el('dropzone');
@@ -43,7 +59,9 @@ function renderAttachments(atts) {
     c.querySelectorAll('.att-rm').forEach(b => b.onclick = () => store.dispatch({ type: ACTION.REMOVE_ATTACHMENT, payload: parseInt(b.dataset.i) }));
 }
 export async function sendEmail() {
+    const fromId = el('compose-from')?.value;
     const to = el('compose-to')?.value, subj = el('compose-subject')?.value, body = el('compose-body')?.value;
+    if (!fromId) { showToast('⚠️ Gönderici hesabı seçilmedi'); return; }
     if (!to) { showToast('⚠️ Alıcı gerekli'); return; }
     const scheduled = el('schedule-check')?.checked;
     const scheduleTime = el('schedule-time')?.value;
@@ -56,7 +74,7 @@ export async function sendEmail() {
         toast.remove();
         try {
             const s = store.getState();
-            await dataSource.sendMessage({ to, subject: subj, body, accountId: s.selectedAccountId, attachments: s.attachments });
+            await dataSource.sendMessage({ to, subject: subj, body, accountId: fromId, attachments: s.attachments });
             showToast('✓ E-posta gönderildi!');
         } catch(e) { showToast('❌ Gönderilemedi: ' + e.message); }
         closeCompose();

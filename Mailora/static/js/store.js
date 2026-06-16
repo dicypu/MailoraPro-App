@@ -5,7 +5,7 @@ export const ACTION = {
     SNOOZE_MESSAGE: 'SNOOZE_MESSAGE', UNSNOOZE_MESSAGE: 'UNSNOOZE_MESSAGE',
     MARK_IMPORTANT: 'MARK_IMPORTANT', MARK_READ: 'MARK_READ', DELETE_MESSAGE: 'DELETE_MESSAGE',
     SELECT_MESSAGE: 'SELECT_MESSAGE', SELECT_ACCOUNT: 'SELECT_ACCOUNT', SELECT_FOLDER: 'SELECT_FOLDER',
-    SET_SEARCH: 'SET_SEARCH', TOGGLE_FOCUS: 'TOGGLE_FOCUS', TOGGLE_THEME: 'TOGGLE_THEME',
+    SET_SEARCH: 'SET_SEARCH', SET_SEARCH_RESULTS: 'SET_SEARCH_RESULTS', TOGGLE_FOCUS: 'TOGGLE_FOCUS', TOGGLE_THEME: 'TOGGLE_THEME',
     TOGGLE_COMPOSE: 'TOGGLE_COMPOSE', TOGGLE_ANALYTICS: 'TOGGLE_ANALYTICS',
     ADD_ATTACHMENT: 'ADD_ATTACHMENT', REMOVE_ATTACHMENT: 'REMOVE_ATTACHMENT', CLEAR_ATTACHMENTS: 'CLEAR_ATTACHMENTS',
     UPDATE_MESSAGES_AI: 'UPDATE_MESSAGES_AI',
@@ -13,7 +13,7 @@ export const ACTION = {
 function initState() {
     return { accounts: [], messages: [], folders: ['Inbox','Sent','Drafts','Spam','Trash'],
         selectedAccountId: null, selectedFolder: 'Inbox', selectedMessageId: null,
-        searchQuery: '', focusMode: false, theme: localStorage.getItem('mailora-theme')||'dark',
+        searchQuery: '', searchResults: null, focusMode: false, theme: localStorage.getItem('mailora-theme')||'dark',
         composeOpen: false, analyticsOpen: false, attachments: [] };
 }
 function getMsgState(m) {
@@ -44,6 +44,7 @@ function reducer(s, a) {
         case ACTION.SELECT_ACCOUNT: n.selectedAccountId=a.payload; break;
         case ACTION.SELECT_FOLDER: n.selectedFolder=a.payload; n.selectedMessageId=null; break;
         case ACTION.SET_SEARCH: n.searchQuery=a.payload; break;
+        case ACTION.SET_SEARCH_RESULTS: n.searchResults=a.payload; break;
         case ACTION.TOGGLE_FOCUS: n.focusMode=!n.focusMode; break;
         case ACTION.TOGGLE_THEME: n.theme=n.theme==='dark'?'light':'dark'; localStorage.setItem('mailora-theme',n.theme); document.documentElement.setAttribute('data-theme',n.theme); break;
         case ACTION.TOGGLE_COMPOSE: n.composeOpen=!n.composeOpen; if(!n.composeOpen) n.attachments=[]; break;
@@ -64,7 +65,11 @@ class Store {
     _notify() { for(const[k,cbs]of this._subs){if(!this._prev||this._prev[k]!==this._state[k]){for(const cb of cbs){try{cb(this._state[k],this._prev?.[k]);}catch(e){console.error(k,e);}}}} }
     _wake() { const now=Date.now();let ch=false;const ms=this._state.messages.map(m=>{if(m.snoozed&&m.snoozeUntil&&m.snoozeUntil<=now){ch=true;return{...m,snoozed:false,snoozeUntil:null};}return m;});if(ch)this._state={...this._state,messages:ms}; }
     getVisibleMessages() {
-        const s=this._state; let ms=s.messages.filter(m=>!m.snoozed||(m.snoozeUntil&&m.snoozeUntil<=Date.now()));
+        const s=this._state; 
+        if (s.searchResults !== null) {
+            return s.searchResults;
+        }
+        let ms=s.messages.filter(m=>!m.snoozed||(m.snoozeUntil&&m.snoozeUntil<=Date.now()));
         if(s.focusMode) ms=ms.filter(m=>m.pinned||m.important);
         if(s.searchQuery){const q=s.searchQuery.toLowerCase();ms=ms.filter(m=>m.from?.toLowerCase().includes(q)||m.subject?.toLowerCase().includes(q)||m.preview?.toLowerCase().includes(q));}
         ms.sort((a,b)=>{if(a.pinned&&!b.pinned)return-1;if(!a.pinned&&b.pinned)return 1;return new Date(b.date)-new Date(a.date);});
